@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://shivambwaj.github.io/kinetic/sitemap.xml
+Sitemap: https://getkinetic.vercel.app/sitemap.xml

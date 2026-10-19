@@ -2,7 +2,7 @@
 
 Prompt to motion launch video, on your PC. Type what you're launching, add your URL and screenshots, and Kinetic writes and animates a bold launch film: kinetic type, a colour per beat, real UI close-ups, cut on the beat. Edit any word, colour or beat, then export MP4 or GIF in 16:9, 9:16 or 1:1.
 
-- **Website:** https://shivambwaj.github.io/kinetic/
+- **Website:** https://getkinetic.vercel.app/
 - **Download (Windows 10/11, 64-bit):** [Kinetic-Setup.exe](https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe)
 
 This repository holds the website and the release downloads. Kinetic is free while in early access.
