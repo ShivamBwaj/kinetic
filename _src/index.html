@@ -37,7 +37,7 @@
 				"url": "https://getkinetic.vercel.app/",
 				"downloadUrl": "https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe",
 				"image": "https://getkinetic.vercel.app/media/og.jpg",
-				"offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+				"offers": [{ "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" }, { "@type": "Offer", "name": "Kinetic Pro", "price": "19", "priceCurrency": "USD", "url": "https://dodo.pe/kinetic-pro-launch" }],
 				"featureList": ["{{TEMPLATE_COUNT}} launch film templates", "{{STYLE_COUNT}} visual styles", "MP4 and GIF export in 16:9, 9:16 and 1:1", "Licence-free synthesised music", "Works offline"]
 			}
 		</script>
@@ -46,7 +46,7 @@
 				"@context": "https://schema.org",
 				"@type": "FAQPage",
 				"mainEntity": [
-					{ "@type": "Question", "name": "Is Kinetic free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Kinetic is free while it is in early access, with every feature, no watermark and no account." } },
+					{ "@type": "Question", "name": "Is Kinetic free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every template, style and export format is free, and exports carry a small Made with Kinetic badge. Kinetic Pro removes the badge for a one-time $19." } },
 					{ "@type": "Question", "name": "Does Kinetic need an internet connection?", "acceptedAnswer": { "@type": "Answer", "text": "No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or use an AI key." } },
 					{ "@type": "Question", "name": "Is there a Mac version?", "acceptedAnswer": { "@type": "Answer", "text": "Not yet. Kinetic runs on Windows 10 and 11 (64-bit)." } },
 					{ "@type": "Question", "name": "Why does Windows warn me when I install it?", "acceptedAnswer": { "@type": "Answer", "text": "The installer is not code-signed yet, so SmartScreen shows a warning. Click More info, then Run anyway. Each release lists the installer's SHA-256 so you can check the file." } },
@@ -159,6 +159,20 @@
 			.facts dt { font-weight: 700; }
 			.facts dd { margin: 0; color: var(--ink-2); }
 
+			.plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+			.plan { border-radius: 22px; padding: clamp(26px, 4vw, 44px); background: var(--mist); display: flex; flex-direction: column; gap: 18px; }
+			.plan h3 { font-size: 24px; margin: 0; }
+			.plan .amount { margin: 0; font-size: clamp(64px, 8vw, 104px); }
+			.plan .amount s { font-size: 0.32em; font-weight: 600; opacity: 0.55; letter-spacing: 0; vertical-align: 0.9em; }
+			.plan .once { margin: -8px 0 0; font-weight: 600; }
+			.plan .incl { flex: 1; }
+			.plan .btn { align-self: flex-start; }
+			.plan.pro { background: var(--cobalt); color: var(--white); }
+			.plan.pro .incl li { border-top-color: rgba(255, 255, 255, 0.22); }
+			.plan.pro .incl li::before { background-color: var(--lime); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4L18 8' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+			.plan.pro .fine { margin: 0; color: rgba(255, 255, 255, 0.78); }
+			.btn.ghost-dark { border-color: var(--black); color: var(--black); }
+			.btn.ghost-dark:hover { background: var(--black); color: var(--white); }
 			.price { background: var(--mist); border-radius: 22px; padding: clamp(28px, 5vw, 56px); display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: start; }
 			.amount { font: 900 clamp(72px, 11vw, 150px)/0.85 var(--display); font-stretch: 120%; letter-spacing: -0.05em; margin: 0 0 16px; }
 			.price .intro { margin-bottom: 26px; }
@@ -185,7 +199,7 @@
 
 			@media (max-width: 860px) {
 				nav a.nl { display: none; }
-				.steps, .split, .price { grid-template-columns: 1fr; }
+				.steps, .split, .price, .plans { grid-template-columns: 1fr; }
 				.facts div { grid-template-columns: 1fr; gap: 4px; }
 				.seg { font-size: 0; padding: 0; }
 			}
@@ -218,7 +232,7 @@
 						</a>
 						<a class="btn ghost" href="#templates">Browse {{TEMPLATE_COUNT}} templates</a>
 					</div>
-					<p class="fine">Free. Version {{VERSION}} for Windows 10 and 11, 64-bit. No account.</p>
+					<p class="fine">Free to use. Version {{VERSION}} for Windows 10 and 11, 64-bit. Pro removes the export badge for $19, once.</p>
 
 					<div class="stage">
 						<div class="screen" id="screen">
@@ -291,21 +305,33 @@
 
 			<section id="pricing" aria-labelledby="price-h">
 				<div class="wrap">
-					<div class="price">
-						<div>
-							<h2 id="price-h">Pricing</h2>
-							<p class="amount">Free</p>
-							<p class="intro">Kinetic is free while it's in early access. Every feature is included and nothing is locked.</p>
-							<a class="btn dl" href="https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe">Download for Windows</a>
+					<h2 id="price-h">Pricing</h2>
+					<p class="intro">Make as many films as you like for free. Pay once to take the badge off.</p>
+					<div class="plans">
+						<div class="plan">
+							<h3>Free</h3>
+							<p class="amount">$0</p>
+							<ul class="incl">
+								<li>All {{TEMPLATE_COUNT}} templates and {{STYLE_COUNT}} styles</li>
+								<li>Unlimited MP4 and GIF exports in every format</li>
+								<li>Licence-free built-in music</li>
+								<li>A small “Made with Kinetic” badge on exports</li>
+							</ul>
+							<a class="btn ghost-dark" href="https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe">Download for Windows</a>
 						</div>
-						<ul class="incl">
-							<li>All {{TEMPLATE_COUNT}} templates and {{STYLE_COUNT}} styles</li>
-							<li>Unlimited exports, no watermark</li>
-							<li>MP4 and GIF in every format</li>
-							<li>Licence-free built-in music</li>
-							<li>No account, no sign-up</li>
-							<li>Videos you make are yours to use commercially</li>
-						</ul>
+						<div class="plan pro">
+							<h3>Pro</h3>
+							<p class="amount">$19 <s>$29</s></p>
+							<p class="once">One payment, launch price. No subscription.</p>
+							<ul class="incl">
+								<li>No badge on any export</li>
+								<li>Client and commercial work</li>
+								<li>Every future template, style and update</li>
+								<li>One key for 3 PCs, never expires</li>
+							</ul>
+							<a class="btn dl" href="https://dodo.pe/kinetic-pro-launch">Buy Pro for $19</a>
+							<p class="fine">Secure checkout by Dodo Payments. Prices adjust to your country. Your key appears straight after payment and arrives by email.</p>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -313,7 +339,8 @@
 			<section id="faq" class="faq" aria-labelledby="faq-h">
 				<div class="wrap">
 					<h2 id="faq-h">Questions</h2>
-					<details><summary>Is Kinetic free?</summary><p>Yes. Kinetic is free while it is in early access, with every feature, no watermark and no account.</p></details>
+					<details><summary>Is Kinetic free?</summary><p>Yes. Every template, style and export format is free, with no account. Free exports carry a small “Made with Kinetic” badge in the corner. Kinetic Pro removes it for a one-time $19.</p></details>
+					<details><summary>How does Pro work?</summary><p>Buy once and you get a licence key on the next page and by email. Click Activate in Kinetic on that page, or paste the key under Get Pro in the app. One key works on 3 PCs and never expires. Refunds and revocations are handled by Dodo Payments, our payment provider.</p></details>
 					<details><summary>Does it need an internet connection?</summary><p>No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or use an AI key.</p></details>
 					<details><summary>Is there a Mac version?</summary><p>Not yet. Kinetic runs on Windows 10 and 11 (64-bit).</p></details>
 					<details><summary>Why does Windows warn me when I install it?</summary><p>The installer is not code-signed yet, so SmartScreen shows a warning. Click <b>More info</b>, then <b>Run anyway</b>. You can check the download against its SHA-256: <code>{{SHA256}}</code></p></details>

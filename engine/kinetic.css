@@ -348,10 +348,20 @@ img.fill {
 #watermark {
 	position: absolute;
 	z-index: 1001;
-	font-family: "Geist Mono", monospace;
+	display: flex;
+	align-items: center;
+	font-family: "Geist", sans-serif;
 	font-weight: 600;
-	letter-spacing: 0.08em;
+	letter-spacing: -0.01em;
 	color: #fff;
-	mix-blend-mode: difference;
-	opacity: 0.8;
+	background: rgba(10, 10, 14, 0.72);
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
+	white-space: nowrap;
+}
+#watermark span:first-child {
+	display: grid;
+	place-items: center;
+	background: #c6f36b;
+	color: #000;
+	font-weight: 800;
 }

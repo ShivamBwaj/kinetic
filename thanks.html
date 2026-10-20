@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Thank you | Kinetic Pro</title>
+		<meta name="robots" content="noindex" />
+		<link rel="icon" href="media/icon.svg" type="image/svg+xml" />
+		<style>
+			@font-face { font-family: "Archivo"; src: url("engine/fonts/Archivo-Variable.ttf") format("truetype"); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
+			@font-face { font-family: "Geist"; src: url("engine/fonts/Geist-Variable.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+			@font-face { font-family: "Geist Mono"; src: url("engine/fonts/GeistMono-Variable.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+			* { box-sizing: border-box; }
+			body { margin: 0; min-height: 100vh; background: #2433ff; color: #fff; font: 18px/1.55 "Geist", system-ui, sans-serif; display: flex; flex-direction: column; }
+			a { color: inherit; }
+			header, main, footer { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 20px; }
+			header { padding-top: 22px; }
+			.logo { display: inline-flex; gap: 10px; align-items: center; font: 800 21px/1 "Archivo", sans-serif; font-stretch: 112%; text-decoration: none; }
+			.mark { width: 30px; height: 30px; border-radius: 8px; background: #c6f36b; color: #000; display: grid; place-items: center; font-size: 17px; }
+			main { flex: 1; padding-top: clamp(40px, 8vw, 96px); padding-bottom: 60px; }
+			h1 { font: 900 clamp(44px, 8vw, 88px)/0.9 "Archivo", sans-serif; font-stretch: 116%; letter-spacing: -0.04em; margin: 0 0 22px; }
+			.lede { font-size: 20px; color: rgba(255, 255, 255, 0.88); margin: 0 0 28px; max-width: 34em; }
+			.keybox { display: flex; gap: 10px; align-items: center; background: #fff; color: #000; border-radius: 14px; padding: 14px 14px 14px 20px; margin: 0 0 22px; }
+			.keybox code { flex: 1; font: 600 clamp(15px, 2.4vw, 20px)/1.3 "Geist Mono", monospace; word-break: break-all; }
+			.btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 24px; border-radius: 999px; font: 650 17px/1 "Geist", sans-serif; text-decoration: none; border: 2px solid currentColor; cursor: pointer; background: transparent; color: inherit; }
+			.btn.lime { background: #c6f36b; color: #000; border-color: #c6f36b; }
+			.btn.small { padding: 10px 16px; font-size: 15px; border-color: #000; color: #000; }
+			.row { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 16px; }
+			.fine { font-size: 15px; color: rgba(255, 255, 255, 0.78); max-width: 38em; }
+			ol { padding-left: 22px; margin: 28px 0 0; color: rgba(255, 255, 255, 0.9); }
+			ol li { margin-bottom: 8px; }
+			footer { padding-bottom: 30px; font-size: 15px; color: rgba(255, 255, 255, 0.75); }
+			:focus-visible { outline: 3px solid #c6f36b; outline-offset: 3px; }
+		</style>
+	</head>
+	<body>
+		<header><a class="logo" href="./"><span class="mark" aria-hidden="true">K</span>Kinetic</a></header>
+		<main>
+			<section id="ok" hidden>
+				<h1>You're Pro. Thank you.</h1>
+				<p class="lede">Your licence key is below, and it's on its way to your inbox too.</p>
+				<div class="keybox"><code id="key"></code><button class="btn small" id="copy" type="button">Copy</button></div>
+				<div class="row">
+					<a class="btn lime" id="activate" href="#">Activate in Kinetic</a>
+					<a class="btn" href="https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe">Download Kinetic</a>
+				</div>
+				<p class="fine">Activate in Kinetic opens the app and unlocks Pro on this PC. Nothing happens? Install Kinetic first, or open it, click Get Pro and paste the key.</p>
+				<ol>
+					<li>Your key works on 3 PCs at a time.</li>
+					<li>Moving PCs? Open Get Pro on the old one and choose Deactivate this PC.</li>
+					<li>Lost the key? It's in your receipt email from Dodo Payments.</li>
+				</ol>
+			</section>
+			<section id="mail" hidden>
+				<h1>Thank you for buying Kinetic Pro.</h1>
+				<p class="lede">Your licence key is on its way to your inbox. Open Kinetic, click Get Pro and paste it under "Already bought it?".</p>
+				<div class="row">
+					<a class="btn lime" href="https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe">Download Kinetic</a>
+					<a class="btn" href="mailto:shivambwaj@gmail.com?subject=Kinetic%20Pro%20key">Email support</a>
+				</div>
+			</section>
+			<section id="fail" hidden>
+				<h1>The payment didn't go through.</h1>
+				<p class="lede">You haven't been charged. Try again, or keep using Kinetic free in the meantime.</p>
+				<div class="row">
+					<a class="btn lime" href="https://dodo.pe/kinetic-pro-launch">Try again</a>
+					<a class="btn" href="mailto:shivambwaj@gmail.com?subject=Kinetic%20checkout">Email support</a>
+				</div>
+			</section>
+		</main>
+		<footer>Help: <a href="mailto:shivambwaj@gmail.com">shivambwaj@gmail.com</a> · <a href="./">Back to Kinetic</a></footer>
+		<script>
+			(() => {
+				const q = new URLSearchParams(location.search);
+				const status = (q.get("status") || "").toLowerCase();
+				// Dodo appends license_key (comma-separated if several). Accept only plain key characters.
+				const key = (q.get("license_key") || q.get("key") || "").split(",")[0].trim();
+				const safeKey = /^[A-Za-z0-9-]{8,128}$/.test(key) ? key : "";
+				const show = (id) => (document.getElementById(id).hidden = false);
+				if (["failed", "cancelled", "canceled", "requires_payment_method"].includes(status)) return show("fail");
+				if (!safeKey) return show("mail");
+				document.getElementById("key").textContent = safeKey;
+				document.getElementById("activate").href = `kinetic://activate?key=${encodeURIComponent(safeKey)}`;
+				const copy = document.getElementById("copy");
+				copy.onclick = () => navigator.clipboard.writeText(safeKey).then(() => (copy.textContent = "Copied"));
+				show("ok");
+			})();
+		</script>
+	</body>
+</html>
