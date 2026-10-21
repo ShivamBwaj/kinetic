@@ -217,7 +217,7 @@
 					<a class="nl" href="#styles">Styles</a>
 					<a class="nl" href="#pricing">Pricing</a>
 					<a class="nl" href="#faq">FAQ</a>
-					<a class="btn dl" href="https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe">Download</a>
+					<a class="btn dl" href="/download">Download</a>
 				</nav>
 			</div>
 		</header>
@@ -228,7 +228,7 @@
 					<h1>Launch videos that move.</h1>
 					<p class="lede">Type what you're launching and add a few screenshots. Kinetic writes and animates a motion-graphics launch film: giant kinetic type, real UI close-ups, a colour change on every beat. Then edit any word, colour or beat, and render it on your PC.</p>
 					<div class="cta">
-						<a class="btn dl" href="https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe">
+						<a class="btn dl" href="/download">
 							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
 							Download for Windows
 						</a>
@@ -581,7 +581,7 @@
 								<li>3 clean exports a month, no badge</li>
 								<li>After that, a small “Made with Kinetic” badge until next month</li>
 							</ul>
-							<a class="btn ghost-dark" href="https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe">Download for Windows</a>
+							<a class="btn ghost-dark" href="/download">Download for Windows</a>
 						</div>
 						<div class="plan pro">
 							<h3>Pro</h3>
@@ -617,7 +617,7 @@
 				<div class="wrap">
 					<h2>Make your launch video this afternoon.</h2>
 					<div class="cta">
-						<a class="btn dl" href="https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe">Download for Windows</a>
+						<a class="btn dl" href="/download">Download for Windows</a>
 						<a class="btn ghost" href="https://github.com/ShivamBwaj/kinetic/releases">All releases</a>
 					</div>
 				</div>
@@ -711,5 +711,6 @@
 			// Keep the engine quiet when the film is scrolled away.
 			new IntersectionObserver((es) => { if (frame && plans && !still) post({ kind: es[0].isIntersecting ? "play" : "pause" }); }, { threshold: 0.15 }).observe(screen);
 		</script>
-	</body>
+			<script>document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href*="dodo.pe"]'); if (a && navigator.sendBeacon) navigator.sendBeacon("/api/track", JSON.stringify({ e: "buy", from: "site" })); });</script>
+</body>
 </html>

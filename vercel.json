@@ -41,11 +41,12 @@
 			],
 			"destination": "https://kinetic.launchloop.tech/:path*",
 			"permanent": true
-		},
+		}
+	],
+	"rewrites": [
 		{
 			"source": "/download",
-			"destination": "https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe",
-			"permanent": false
+			"destination": "/api/download"
 		}
 	]
 }
