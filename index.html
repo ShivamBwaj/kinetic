@@ -37,7 +37,7 @@
 				"url": "https://kinetic.launchloop.tech/",
 				"downloadUrl": "https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe",
 				"image": "https://kinetic.launchloop.tech/media/og.jpg",
-				"offers": [{ "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" }, { "@type": "Offer", "name": "Kinetic Pro", "price": "19", "priceCurrency": "USD", "url": "https://dodo.pe/kinetic-pro-launch" }],
+				"offers": [{ "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" }, { "@type": "Offer", "name": "Kinetic Pro (founding price, first 100 buyers)", "price": "9", "priceCurrency": "USD", "url": "https://kinetic.launchloop.tech/buy" }],
 				"featureList": ["40 launch film templates", "12 visual styles", "MP4 and GIF export in 16:9, 9:16 and 1:1", "Licence-free synthesised music", "Works offline"]
 			}
 		</script>
@@ -46,7 +46,7 @@
 				"@context": "https://schema.org",
 				"@type": "FAQPage",
 				"mainEntity": [
-					{ "@type": "Question", "name": "Is Kinetic free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every template, style and export format is free, and you get 3 clean exports a month with no badge. After that, exports carry a small Made with Kinetic badge until the next month. Kinetic Pro gives unlimited clean exports for a one-time $19." } },
+					{ "@type": "Question", "name": "Is Kinetic free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every template, style and export format is free, and you get 3 clean exports a month with no badge. After that, exports carry a small Made with Kinetic badge until the next month. Kinetic Pro gives unlimited clean exports for a one-time payment: $9 for the first 100 buyers, then $19." } },
 					{ "@type": "Question", "name": "Does Kinetic need an internet connection?", "acceptedAnswer": { "@type": "Answer", "text": "No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or use an AI key." } },
 					{ "@type": "Question", "name": "Is there a Mac version?", "acceptedAnswer": { "@type": "Answer", "text": "Not yet. Kinetic runs on Windows 10 and 11 (64-bit)." } },
 					{ "@type": "Question", "name": "Why does Windows warn me when I install it?", "acceptedAnswer": { "@type": "Answer", "text": "The installer is not code-signed yet, so SmartScreen shows a warning. Click More info, then Run anyway. Each release lists the installer's SHA-256 so you can check the file." } },
@@ -168,6 +168,16 @@
 			.plan .incl { flex: 1; }
 			.plan .btn { align-self: flex-start; }
 			.plan.pro { background: var(--cobalt); color: var(--white); }
+			.plan .tag { display: inline-block; margin-left: 8px; padding: 4px 10px; border-radius: 999px; background: var(--lime); color: var(--black); font: 700 13px/1.2 var(--body); vertical-align: 3px; }
+			.ladder { display: grid; gap: 10px; }
+			.ladder-bar { height: 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.18); overflow: hidden; }
+			.ladder-bar i { display: block; height: 100%; width: 0; background: var(--lime); border-radius: 999px; transition: width 0.8s; }
+			.ladder p { margin: 0; font-size: 16px; color: rgba(255, 255, 255, 0.9); }
+			.steps-price { display: flex; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: 14px; }
+			.steps-price li { padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.35); opacity: 0.7; }
+			.steps-price li.on { background: var(--white); color: var(--cobalt); border-color: var(--white); opacity: 1; font-weight: 700; }
+			.founding-pill { display: inline-block; margin-bottom: 18px; padding: 8px 16px; border-radius: 999px; background: var(--lime); color: var(--black); font: 650 15px/1.3 var(--body); text-decoration: none; }
+			.founding-pill:hover { background: var(--white); }
 			.plan.pro .incl li { border-top-color: rgba(255, 255, 255, 0.22); }
 			.plan.pro .incl li::before { background-color: var(--lime); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4L18 8' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
 			.plan.pro .fine { margin: 0; color: rgba(255, 255, 255, 0.78); }
@@ -225,6 +235,7 @@
 		<main id="main">
 			<div class="top">
 				<div class="wrap hero">
+					<a class="founding-pill" href="#pricing" data-f-pill>Founding price: Pro is $9 for the first 100 buyers</a>
 					<h1>Launch videos that move.</h1>
 					<p class="lede">Type what you're launching and add a few screenshots. Kinetic writes and animates a motion-graphics launch film: giant kinetic type, real UI close-ups, a colour change on every beat. Then edit any word, colour or beat, and render it on your PC.</p>
 					<div class="cta">
@@ -584,10 +595,15 @@
 							</ul>
 							<a class="btn ghost-dark" href="/download">Download for Windows</a>
 						</div>
-						<div class="plan pro">
-							<h3>Pro</h3>
-							<p class="amount">$19 <s>$29</s></p>
-							<p class="once">One payment, launch price. No subscription.</p>
+						<div class="plan pro" id="pro">
+							<h3>Pro <span class="tag" data-f-tag>Founding 100</span></h3>
+							<p class="amount" data-f-amount>$9 <s>$19</s></p>
+							<p class="once" data-f-once>The first 100 buyers pay $9, once. After that it's $19. No subscription.</p>
+							<div class="ladder" aria-live="polite">
+								<div class="ladder-bar" role="progressbar" aria-label="Founding licences taken" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i data-f-bar></i></div>
+								<p data-f-text>Founding licences: checking how many are left…</p>
+								<ol class="steps-price"><li class="on" data-f-step9>$9 · first 100</li><li data-f-step19>$19 · everyone after</li></ol>
+							</div>
 							<ul class="incl">
 								<li>Unlimited exports, never a badge</li>
 								<li>100 AI-written films a month</li>
@@ -595,7 +611,7 @@
 								<li>Every future template, style and update</li>
 								<li>One key for 3 PCs, never expires</li>
 							</ul>
-							<a class="btn dl" href="https://dodo.pe/kinetic-pro-launch">Buy Pro for $19</a>
+							<a class="btn dl" href="/buy" data-f-btn>Get Pro for $9</a>
 							<p class="fine">Secure checkout by Dodo Payments. Your key appears straight after payment and arrives by email.</p>
 						</div>
 					</div>
@@ -605,7 +621,7 @@
 			<section id="faq" class="faq" aria-labelledby="faq-h">
 				<div class="wrap">
 					<h2 id="faq-h">Questions</h2>
-					<details><summary>Is Kinetic free?</summary><p>Yes. Every template, style and export format is free, with no account, and your first 3 exports each month are clean. After that, exports carry a small “Made with Kinetic” badge in the corner until the next month. Kinetic Pro gives unlimited clean exports for a one-time $19.</p></details>
+					<details><summary>Is Kinetic free?</summary><p>Yes. Every template, style and export format is free, with no account, and your first 3 exports each month are clean. After that, exports carry a small “Made with Kinetic” badge in the corner until the next month. Kinetic Pro gives unlimited clean exports for a one-time payment: $9 for the first 100 buyers, then $19.</p></details>
 					<details><summary>How does Pro work?</summary><p>Buy once and you get a licence key on the next page and by email. Click Activate in Kinetic on that page, or paste the key under Get Pro in the app. One key works on 3 PCs and never expires. Refunds and revocations are handled by Dodo Payments, our payment provider.</p></details>
 					<details><summary>Does it need an internet connection?</summary><p>No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or use an AI key.</p></details>
 					<details><summary>Is there a Mac version?</summary><p>Not yet. Kinetic runs on Windows 10 and 11 (64-bit).</p></details>
@@ -715,6 +731,27 @@
 			// Keep the engine quiet when the film is scrolled away.
 			new IntersectionObserver((es) => { if (frame && plans && !still) post({ kind: es[0].isIntersecting ? "play" : "pause" }); }, { threshold: 0.15 }).observe(screen);
 		</script>
-			<script>document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href*="dodo.pe"]'); if (a && navigator.sendBeacon) navigator.sendBeacon("/api/track", JSON.stringify({ e: "buy", from: "site" })); });</script>
+			<script>
+			// Founding ladder: live count from Dodo sales; flips the card to $19 once 100 are sold.
+			fetch("/api/founding").then((r) => r.json()).then((f) => {
+				const $ = (k) => document.querySelector(`[data-f-${k}]`);
+				const pct = Math.round((100 * f.sold) / f.cap);
+				$("bar").style.width = `${Math.max(2, pct)}%`;
+				$("bar").parentElement.setAttribute("aria-valuenow", f.sold);
+				if (f.open) {
+					$("text").textContent = `${f.sold} of ${f.cap} founding licences taken. ${f.left} left at $9, then $19.`;
+					$("pill").textContent = `Founding price: Pro is $9 for the first ${f.cap} buyers. ${f.left} left`;
+				} else {
+					$("amount").textContent = `$${f.regular}`;
+					$("tag").textContent = "Lifetime";
+					$("once").textContent = "One payment. No subscription. All 100 founding licences are taken.";
+					$("text").textContent = `All ${f.cap} founding licences sold. Thank you!`;
+					$("btn").textContent = `Buy Pro for $${f.regular}`;
+					$("step9").classList.remove("on");
+					$("step19").classList.add("on");
+					$("pill").hidden = true;
+				}
+			}).catch(() => {});
+		</script>
 </body>
 </html>

@@ -64,7 +64,7 @@
 				<h1>The payment didn't go through.</h1>
 				<p class="lede">You haven't been charged. Try again, or keep using Kinetic free in the meantime.</p>
 				<div class="row">
-					<a class="btn lime" href="https://dodo.pe/kinetic-pro-launch">Try again</a>
+					<a class="btn lime" href="/buy">Try again</a>
 					<a class="btn" href="mailto:shivambwaj@gmail.com?subject=Kinetic%20checkout">Email support</a>
 				</div>
 			</section>
@@ -87,6 +87,5 @@
 				show("ok");
 			})();
 		</script>
-			<script>document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href*="dodo.pe"]'); if (a && navigator.sendBeacon) navigator.sendBeacon("/api/track", JSON.stringify({ e: "buy", from: "site" })); });</script>
 </body>
 </html>

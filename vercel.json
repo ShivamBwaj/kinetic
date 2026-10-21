@@ -51,6 +51,10 @@
 		{
 			"source": "/api/v1/chat/completions",
 			"destination": "/api/write"
+		},
+		{
+			"source": "/buy",
+			"destination": "/api/buy"
 		}
 	]
 }
