@@ -1711,7 +1711,7 @@
 			const wm = el("div", "", stage);
 			wm.id = "watermark";
 			const mk = el("span", "", wm, "K");
-			el("span", "", wm, "Made with Kinetic · getkinetic.vercel.app");
+			el("span", "", wm, "Made with Kinetic · kinetic.launchloop.tech");
 			set(wm, { right: px(24 * S), bottom: px(22 * S), fontSize: px(22 * S), padding: `${px(9 * S)} ${px(16 * S)} ${px(9 * S)} ${px(9 * S)}`, gap: px(10 * S), borderRadius: px(999) });
 			set(mk, { width: px(30 * S), height: px(30 * S), borderRadius: px(8 * S), fontSize: px(18 * S) });
 		}
