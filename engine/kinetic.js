@@ -13,9 +13,43 @@
 		t <= 0 ? 0 : t >= 1 ? 1 : t < 0.5 ? 2 ** (20 * t - 10) / 2 : (2 - 2 ** (-20 * t + 10)) / 2;
 	const cubicInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 	const quartOut = (t) => 1 - (1 - clamp(t)) ** 4;
-	/** Underdamped spring step response, 0 -> 1 with overshoot. Closed form: no state. */
+	/** Film-wide motion tuning from the plan (snap, bounce, transition curve). Neutral by default. */
+	let M = { snap: 1, bounce: 1, curve: null };
+	/** CSS-style cubic-bezier(x1, y1, x2, y2) as a function of progress 0..1 (Newton, then bisection). */
+	const bezier = ([x1, y1, x2, y2]) => {
+		const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+		const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+		const X = (u) => ((ax * u + bx) * u + cx) * u;
+		const Y = (u) => ((ay * u + by) * u + cy) * u;
+		const dX = (u) => (3 * ax * u + 2 * bx) * u + cx;
+		return (x) => {
+			if (x <= 0) return 0;
+			if (x >= 1) return 1;
+			let u = x;
+			for (let i = 0; i < 8; i++) {
+				const d = dX(u);
+				if (Math.abs(d) < 1e-6) break;
+				const nu = u - (X(u) - x) / d;
+				if (nu < 0 || nu > 1) break;
+				u = nu;
+			}
+			if (Math.abs(X(u) - x) > 1e-4) {
+				let lo = 0, hi = 1;
+				for (let i = 0; i < 30; i++) {
+					u = (lo + hi) / 2;
+					if (X(u) < x) lo = u;
+					else hi = u;
+				}
+			}
+			return Y(u);
+		};
+	};
+	/** Underdamped spring step response, 0 -> 1 with overshoot. Closed form: no state.
+	 *  Snap scales its speed; bounce scales its overshoot (0 = critically damped, no overshoot). */
 	const spring = (t, freq = 3.6, damp = 0.5) => {
 		if (t <= 0) return 0;
+		freq *= M.snap;
+		damp = M.bounce <= 0.01 ? 0.999 : Math.min(0.999, Math.max(0.12, damp / M.bounce));
 		const w = 2 * Math.PI * freq;
 		const wd = w * Math.sqrt(1 - damp * damp);
 		return 1 - Math.exp(-damp * w * t) * (Math.cos(wd * t) + ((damp * w) / wd) * Math.sin(wd * t));
@@ -1632,6 +1666,8 @@
 	const build = async (nextPlan, nextOpts = {}) => {
 		ready = false;
 		plan = nextPlan;
+		const mo = plan.motion ?? {};
+		M = { snap: mo.snap ?? 1, bounce: mo.bounce ?? 1, curve: Array.isArray(mo.curve) && mo.curve.length === 4 ? bezier(mo.curve) : null };
 		opts = nextOpts;
 		W = plan.width;
 		H = plan.height;
@@ -1777,7 +1813,7 @@
 			const t0 = b.ps.start - tr / 2;
 			if (t < t0 || t > t0 + tr) continue;
 			const p = (t - t0) / tr;
-			applyTransition(b.ps.transition, a, b, p);
+			applyTransition(b.ps.transition, a, b, M.curve ? M.curve(p) : p);
 		}
 		if (overlays.length) {
 			const cur = built.find((b) => t >= b.ps.start && t < b.ps.start + b.ps.dur) ?? built[built.length - 1];
