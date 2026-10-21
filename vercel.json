@@ -47,6 +47,10 @@
 		{
 			"source": "/download",
 			"destination": "/api/download"
+		},
+		{
+			"source": "/api/v1/chat/completions",
+			"destination": "/api/write"
 		}
 	]
 }
