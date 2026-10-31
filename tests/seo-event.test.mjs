@@ -6,7 +6,7 @@ function request(body, headers = {}, method = "POST") {
 	return { method, body, headers: { origin: "https://kinetic.launchloop.tech", "user-agent": "Mozilla/5.0", "x-forwarded-for": "192.0.2.1", ...headers } };
 }
 function response() {
-	return { code: 0, setHeader() {}, status(code) { this.code = code; return this; }, end() { return this; } };
+	return { code: 0, headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(code) { this.code = code; return this; }, end() { return this; } };
 }
 
 test("accepts only known routes and event destinations", async () => {
@@ -26,7 +26,7 @@ test("stores only aggregate path counters and suppresses repeated events", async
 	globalThis.fetch = async (url, options) => { calls.push(JSON.parse(options.body)); return { ok: true, json: async () => ({ result: 1 }) }; };
 	try {
 		const body = { event: "checkout", landing: "/guides", source: "/pricing", destination: "/buy", email: "discard@example.com", prompt: "discard this" };
-		for (let i = 0; i < 2; i++) { const res = response(); await handler(request(body), res); assert.equal(res.code, 204); }
+		for (let i = 0; i < 2; i++) { const res = response(); await handler(request(body), res); assert.equal(res.code, 204); assert.equal(res.headers["X-Kinetic-Counted"], i === 0 ? "1" : undefined); }
 		assert.equal(calls.length, 2);
 		assert.deepEqual(calls[0].slice(2), ["checkout|/guides|/pricing|/buy", "1"]);
 		assert.deepEqual(calls[1].slice(2), [String(120 * 86400)]);

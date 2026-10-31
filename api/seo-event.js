@@ -24,8 +24,10 @@ export default async function handler(req, res) {
 	if (!firstInWindow(req, `seo:${field}`)) return res.status(204).end();
 	try {
 		const key = `kinetic:seo:${new Date().toISOString().slice(0, 10)}`;
-		await redis("HINCRBY", key, field, 1);
-		await redis("EXPIRE", key, 120 * 86400);
+		const count = Number(await redis("HINCRBY", key, field, 1));
+		if (!Number.isInteger(count) || count < 1) throw new Error("counter write failed");
+		if (Number(await redis("EXPIRE", key, 120 * 86400)) !== 1) throw new Error("counter expiry failed");
+		res.setHeader("X-Kinetic-Counted", "1");
 	} catch (e) { console.error("seo counter unavailable"); }
 	return res.status(204).end();
 }
