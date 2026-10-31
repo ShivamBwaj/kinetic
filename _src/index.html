@@ -4,25 +4,26 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Kinetic: free launch video maker for Windows, from a prompt</title>
-		<meta name="description" content="Kinetic turns a prompt and your screenshots into a motion-graphics launch video: kinetic type, real UI close-ups, cut on the beat. {{TEMPLATE_COUNT}} templates, {{STYLE_COUNT}} styles. Free for Windows." />
+		<meta name="description" content="Kinetic turns a prompt and your screenshots into a motion-graphics launch video: kinetic type, real-looking product screens in your brand colour, cut on the beat. {{TEMPLATE_COUNT}} templates, {{STYLE_COUNT}} styles. Free for Windows." />
 		<link rel="canonical" href="https://kinetic.launchloop.tech/" />
 		<meta name="theme-color" content="#2433ff" />
 		<meta name="color-scheme" content="light" />
+		<script defer src="/media/seo.js"></script>
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="Kinetic" />
 		<meta property="og:url" content="https://kinetic.launchloop.tech/" />
 		<meta property="og:title" content="Kinetic: launch videos that move" />
 		<meta property="og:description" content="Prompt to motion launch video, rendered on your PC. Edit any word, colour or beat. Free for Windows." />
-		<meta property="og:image" content="https://kinetic.launchloop.tech/media/og.jpg" />
+		<meta property="og:image" content="https://kinetic.launchloop.tech/media/og-v2.jpg" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content="Kinetic launch film frame: Meet Kinetic in giant type" />
+		<meta property="og:image:alt" content="Kinetic: type one sentence, get a launch video. The app beside four films Kinetic AI wrote from one sentence each." />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content="Kinetic: launch videos that move" />
 		<meta name="twitter:description" content="Prompt to motion launch video, rendered on your PC. Free for Windows." />
-		<meta name="twitter:image" content="https://kinetic.launchloop.tech/media/og.jpg" />
+		<meta name="twitter:image" content="https://kinetic.launchloop.tech/media/og-v2.jpg" />
 		<link rel="icon" href="media/icon.svg" type="image/svg+xml" />
-		<link rel="preload" href="engine/fonts/Archivo-Variable.ttf" as="font" type="font/ttf" crossorigin />
+		<link rel="preload" href="engine/fonts/Archivo-Variable.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="engine/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
 		<script type="application/ld+json">
 			{
@@ -36,9 +37,9 @@
 				"description": "Desktop app that turns a prompt, a URL and screenshots into a motion-graphics launch video you can edit word by word and render locally to MP4 or GIF.",
 				"url": "https://kinetic.launchloop.tech/",
 				"downloadUrl": "https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe",
-				"image": "https://kinetic.launchloop.tech/media/og.jpg",
+				"image": "https://kinetic.launchloop.tech/media/og-v2.jpg",
 				"offers": [{ "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" }, { "@type": "Offer", "name": "Kinetic Pro (founding price, first 100 buyers)", "price": "9", "priceCurrency": "USD", "url": "https://kinetic.launchloop.tech/buy" }],
-				"featureList": ["{{TEMPLATE_COUNT}} launch film templates", "{{STYLE_COUNT}} visual styles", "MP4 and GIF export in 16:9, 9:16 and 1:1", "Licence-free synthesised music", "Works offline"]
+				"featureList": ["{{TEMPLATE_COUNT}} launch film templates", "{{STYLE_COUNT}} visual styles, including Studio, Daylight, One take, Collage and Sketch", "AI-written product screens with your logo, nav, stats and brand colour", "Mixtape recipe that changes style every scene", "AI freestyle scenes when no built-in scene fits", "AI writes a film in about 5 seconds", "Surprise me: a different style, music and story every time", "MP4 and GIF export in 16:9, 9:16 and 1:1", "Licence-free synthesised music", "Works offline"]
 			}
 		</script>
 		<script type="application/ld+json">
@@ -47,7 +48,7 @@
 				"@type": "FAQPage",
 				"mainEntity": [
 					{ "@type": "Question", "name": "Is Kinetic free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every template, style and export format is free, and you get 3 clean exports a month with no badge. After that, exports carry a small Made with Kinetic badge until the next month. Kinetic Pro gives unlimited clean exports for a one-time payment: $9 for the first 100 buyers, then $19." } },
-					{ "@type": "Question", "name": "Does Kinetic need an internet connection?", "acceptedAnswer": { "@type": "Answer", "text": "No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or use an AI key." } },
+					{ "@type": "Question", "name": "Does Kinetic need an internet connection?", "acceptedAnswer": { "@type": "Answer", "text": "No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or have the AI write your film." } },
 					{ "@type": "Question", "name": "Is there a Mac version?", "acceptedAnswer": { "@type": "Answer", "text": "Not yet. Kinetic runs on Windows 10 and 11 (64-bit)." } },
 					{ "@type": "Question", "name": "Why does Windows warn me when I install it?", "acceptedAnswer": { "@type": "Answer", "text": "The installer is not code-signed yet, so SmartScreen shows a warning. Click More info, then Run anyway. Each release lists the installer's SHA-256 so you can check the file." } },
 					{ "@type": "Question", "name": "Can I use the videos commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The videos you export are yours, and the built-in music is synthesised in the app, so it is licence-free." } }
@@ -55,7 +56,7 @@
 			}
 		</script>
 		<style>
-			@font-face { font-family: "Archivo"; src: url("engine/fonts/Archivo-Variable.ttf") format("truetype"); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
+			@font-face { font-family: "Archivo"; src: url("engine/fonts/Archivo-Variable.woff2") format("woff2"), url("engine/fonts/Archivo-Variable.ttf") format("truetype"); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
 			@font-face { font-family: "Geist"; src: url("engine/fonts/Geist-Variable.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
 			@font-face { font-family: "Geist Mono"; src: url("engine/fonts/GeistMono-Variable.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
 			:root {
@@ -103,8 +104,36 @@
 			.btn svg { width: 18px; height: 18px; flex: none; }
 			.fine { font-size: 15px; color: rgba(255, 255, 255, 0.75); margin: 14px 0 0; }
 
+			/* Hero: copy and the try-it box beside the live film, so the film is above the fold */
+			.hero-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(28px, 4vw, 56px); align-items: center; }
+			.hero-grid h1 { font-size: clamp(34px, 3.7vw, 56px); max-width: 15ch; margin-bottom: 18px; }
+			.try-busy[hidden], .try-done[hidden] { display: none; }
+			.hero-grid h1 em { font-style: normal; color: var(--lime); }
+			.hero-grid .lede { margin-bottom: 22px; }
+			.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+			.try { display: flex; gap: 8px; align-items: stretch; background: var(--white); border-radius: 18px; padding: 8px; box-shadow: 0 18px 50px rgba(6, 10, 80, 0.35); }
+			.try textarea { flex: 1; min-width: 0; border: 0; resize: none; font: 500 17px/1.4 var(--body); color: var(--black); padding: 10px 12px; border-radius: 12px; background: transparent; }
+			.try textarea:focus { outline: none; }
+			.try:focus-within { box-shadow: 0 0 0 3px var(--lime), 0 18px 50px rgba(6, 10, 80, 0.35); }
+			.try-go { flex: none; padding: 14px 20px; border-radius: 12px; align-self: stretch; justify-content: center; }
+			.try-go:disabled { opacity: 0.6; cursor: progress; }
+			.try-ex { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0 0; font-size: 15px; color: rgba(255, 255, 255, 0.78); }
+			.ex { border: 1.5px solid rgba(255, 255, 255, 0.4); background: transparent; color: var(--white); border-radius: 999px; padding: 6px 12px; font: 550 14px/1 var(--body); cursor: pointer; }
+			.ex:hover { border-color: var(--lime); color: var(--lime); }
+			.try-busy { position: absolute; inset: 0 0 auto 0; aspect-ratio: 16 / 9; display: flex; gap: 12px; align-items: center; justify-content: center; border-radius: 16px; background: rgba(8, 10, 40, 0.72); backdrop-filter: blur(6px); color: var(--white); font: 600 18px/1.3 var(--body); z-index: 3; }
+			.spin { width: 22px; height: 22px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.25); border-top-color: var(--lime); animation: spin 0.8s linear infinite; }
+			@keyframes spin { to { transform: rotate(1turn); } }
+			.try-done { margin: 14px 0 0; padding: 16px 18px; border-radius: 16px; background: rgba(255, 255, 255, 0.1); }
+			.try-done p { margin: 0 0 12px; font-weight: 600; }
+			.try-done.err { background: rgba(255, 90, 90, 0.18); outline: 2px solid rgba(255, 140, 140, 0.6); }
+			.try-done .btn { padding: 12px 18px; font-size: 16px; }
+			.send-link { margin: 12px 0 0; background: none; border: 0; padding: 0; color: var(--lime); font: 600 15px/1.4 var(--body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; }
+			.send-link[hidden] { display: none; }
+			@media (max-width: 920px) { .hero-grid { grid-template-columns: 1fr; } .try { flex-direction: column; } .try-go { width: 100%; } }
+			@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+
 			/* The live film */
-			.stage { margin: clamp(40px, 6vw, 72px) 0 0; position: relative; }
+			.stage { margin: 0; position: relative; }
 			.screen { position: relative; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: var(--black); box-shadow: 0 40px 90px rgba(6, 10, 80, 0.45); }
 			.screen iframe, .screen img { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
 			.screen img { object-fit: cover; transition: opacity 0.4s; }
@@ -116,9 +145,15 @@
 			.seg.now { background: rgba(255, 255, 255, 0.3); color: var(--white); }
 			.seg:hover { background: rgba(255, 255, 255, 0.24); }
 			.head { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--lime); left: 0; pointer-events: none; border-radius: 2px; }
-			.looks-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 22px 0 clamp(48px, 7vw, 88px); }
-			.looks-row > p { margin: 0; font-size: 16px; color: rgba(255, 255, 255, 0.85); }
-			.looks { display: flex; gap: 8px; flex-wrap: wrap; }
+			.looks-row { padding: 22px 0 clamp(48px, 7vw, 88px); min-width: 0; }
+			.looks-row > p { margin: 0 0 12px; font-size: 16px; color: rgba(255, 255, 255, 0.85); }
+			.looks-bar { display: flex; align-items: center; gap: 8px; min-width: 0; }
+			.looks { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; padding: 4px; margin: -4px; flex: 1; min-width: 0; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); }
+			.looks::-webkit-scrollbar { display: none; }
+			.looks .look { flex: none; scroll-snap-align: start; white-space: nowrap; }
+			.nudge { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.35); background: transparent; color: var(--white); cursor: pointer; display: grid; place-items: center; }
+			.nudge:hover { border-color: var(--white); background: rgba(255, 255, 255, 0.12); }
+			.nudge svg { width: 16px; height: 16px; }
 			.look { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px 8px 9px; border-radius: 999px; border: 1.5px solid rgba(255, 255, 255, 0.35); background: transparent; color: var(--white); font: 550 14px/1 var(--body); cursor: pointer; }
 			.look:hover { border-color: var(--white); }
 			.look.on { background: var(--white); color: var(--black); border-color: var(--white); }
@@ -138,20 +173,38 @@
 			.steps li::before { content: counter(s); font: 900 44px/1 var(--display); font-stretch: 118%; color: var(--cobalt); display: block; margin-bottom: 14px; }
 			.steps p { margin: 0; color: var(--ink-2); font-size: 17px; }
 
-			.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 28px; }
-			.chip { border: 1.5px solid var(--rule); background: var(--white); border-radius: 999px; padding: 9px 15px; font: 550 15px/1 var(--body); cursor: pointer; color: var(--black); }
-			.chip:hover { border-color: var(--black); }
-			.chip.on { background: var(--black); color: var(--white); border-color: var(--black); }
-			.tpls { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 36px 24px; }
-			.tpl img { width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: var(--mist); border-radius: 12px; margin-bottom: 14px; }
-			.tpl p { margin: 0; font-size: 16px; color: var(--ink-2); }
-			.tpl .tpl-meta { margin-top: 8px; font-size: 14px; }
-			.tpl[hidden] { display: none; }
-
-			.styles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px 24px; }
+			/* Slideshows (featured templates, styles) */
+			.carousel { position: relative; }
+			.slides { list-style: none; margin: 0; padding: 4px 4px 8px; display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+			.slides::-webkit-scrollbar { display: none; }
+			.slide { flex: 0 0 min(340px, 82%); scroll-snap-align: start; position: relative; }
+			.slide-pic { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: var(--mist); margin-bottom: 14px; }
+			.slide-pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+			#styles .slide-pic img { object-fit: cover; }
+			.slide-pic .style-sw { position: absolute; inset: 0; height: auto; margin: 0; border-radius: 0; }
+			.slide h3 a { text-decoration: none; }
+			.slide h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 12px; }
+			.slide h3 a:focus-visible { outline: none; }
+			.slide:has(a:focus-visible) .slide-pic { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+			.slide:hover h3 a { text-decoration: underline; text-underline-offset: 4px; }
+			.slide p { margin: 0; font-size: 16px; color: var(--ink-2); }
+			.slide .slide-meta { margin-top: 8px; font-size: 14px; }
+			.badge { position: absolute; top: 10px; left: 10px; padding: 4px 10px; border-radius: 999px; background: var(--lime); color: var(--black); font: 700 13px/1.2 var(--body); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18); }
+			.car-ctl { display: flex; align-items: center; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+			.car-btn { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--rule); background: var(--white); color: var(--black); cursor: pointer; display: grid; place-items: center; }
+			.car-btn:hover { border-color: var(--black); }
+			.car-btn svg { width: 18px; height: 18px; }
+			.car-count { font: 600 15px/1 var(--body); color: var(--ink-2); min-width: 4.5em; font-variant-numeric: tabular-nums; }
+			.car-ctl .btn { margin-left: auto; }
 			.style-sw { display: flex; height: 54px; border-radius: 10px; overflow: hidden; margin-bottom: 14px; box-shadow: inset 0 0 0 1px var(--rule); }
 			.style-sw i { flex: 1; }
-			.style p { margin: 0; color: var(--ink-2); font-size: 16px; }
+
+			/* New in this version */
+			.news { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 clamp(24px, 4vw, 48px); }
+			.news li { border-top: 1px solid var(--rule); padding: 18px 0 20px; }
+			.news h3 { font-size: 18px; }
+			.news p { margin: 0; color: var(--ink-2); font-size: 16px; }
+			.tag-new { display: inline-block; margin: 0 0 14px; padding: 4px 10px; border-radius: 999px; background: var(--lime); color: var(--black); font: 700 13px/1.2 var(--body); }
 
 			.split { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 clamp(24px, 5vw, 72px); }
 			.facts { margin: 0; }
@@ -212,8 +265,14 @@
 			@media (max-width: 860px) {
 				nav a.nl { display: none; }
 				.steps, .split, .price, .plans { grid-template-columns: 1fr; }
+				.news { grid-template-columns: repeat(2, 1fr); }
 				.facts div { grid-template-columns: 1fr; gap: 4px; }
 				.seg { font-size: 0; padding: 0; }
+			}
+			@media (max-width: 560px) {
+				.news { grid-template-columns: 1fr; }
+				.nudge { display: none; }
+				.car-ctl .btn { margin-left: 0; width: 100%; justify-content: center; }
 			}
 		</style>
 		<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
@@ -237,17 +296,23 @@
 		<main id="main">
 			<div class="top">
 				<div class="wrap hero">
+					<div class="hero-grid">
+					<div class="hero-copy">
 					<a class="founding-pill" href="#pricing" data-f-pill>Founding price: Pro is $9 for the first 100 buyers</a>
-					<h1>Launch videos that move.</h1>
-					<p class="lede">Type what you're launching and add a few screenshots. Kinetic writes and animates a motion-graphics launch film: giant kinetic type, real UI close-ups, a colour change on every beat. Then edit any word, colour or beat, and render it on your PC.</p>
-					<div class="cta">
-						<a class="btn dl" href="/download">
-							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
-							Download for Windows
-						</a>
-						<a class="btn ghost" href="#templates">Browse {{TEMPLATE_COUNT}} templates</a>
+					<h1>Type one sentence. <em>Get a launch video.</em></h1>
+					<p class="lede">Kinetic AI writes the scenes, designs your product's screens, picks the music and animates it all. Try a 15-second preview right here: free, no signup, ready in seconds.</p>
+					<form class="try" id="try" autocomplete="off">
+						<label class="sr-only" for="try-in">Describe your product in one sentence</label>
+						<textarea id="try-in" rows="2" maxlength="600" placeholder="e.g. Pocket, a budgeting app that splits rent and bills with roommates"></textarea>
+						<button class="btn dl try-go" id="try-go" type="submit">✦ Make my video</button>
+					</form>
+					<div class="try-ex"><span>Or try:</span>
+						<button type="button" class="ex" data-ex="Pocket, a budgeting app for students that splits rent and bills with roommates automatically.">a budgeting app</button>
+						<button type="button" class="ex" data-ex="Shipyard gives every pull request its own live preview URL in 30 seconds, with a seeded database.">a dev tool</button>
+						<button type="button" class="ex" data-ex="Bloom, an AI journaling app that turns a 1-minute voice note into a calm weekly reflection.">a journaling app</button>
 					</div>
-					<p class="fine">Free to use, with 3 clean exports a month. Version {{VERSION}} for Windows 10 and 11, 64-bit. Built on the <a href="https://launchloop.tech">LaunchLoop</a> engine.</p>
+					<p class="fine" id="try-note" aria-live="polite">Like it? <a href="/download">Download for Windows</a> to edit every word and export the MP4. Free, 3 clean exports a month.</p>
+					</div>
 
 					<div class="stage">
 						<div class="screen" id="screen">
@@ -257,11 +322,24 @@
 							</button>
 						</div>
 						<div class="track" id="track" aria-label="Scenes in this film"><span class="head" id="head"></span></div>
+						<div class="try-busy" id="try-busy" hidden><span class="spin" aria-hidden="true"></span><span id="try-busy-text">Writing your film…</span></div>
+						<div class="try-done" id="try-done" hidden>
+							<p id="try-done-text">Your film, written in seconds by Kinetic AI.</p>
+							<div class="cta">
+								<a class="btn dl" href="/download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>Download free to edit and export it</a>
+								<a class="btn ghost" href="/buy">Get Pro for $9</a>
+							</div>
+							<button type="button" class="send-link" id="try-send" hidden>On your phone or a Mac? Send the download link to your Windows PC</button>
+						</div>
+					</div>
 					</div>
 					<div class="looks-row">
-						<p>This film is running live, in Kinetic's own engine. Same film, {{STYLE_COUNT}} looks:</p>
-						<div class="looks" id="looks">
+						<p id="looks-h">This film is running live, in Kinetic's own engine. Same film, {{STYLE_COUNT}} looks:</p>
+						<div class="looks-bar">
+							<div class="looks" id="looks" role="group" aria-labelledby="looks-h">
 <!--STYLE_BUTTONS-->
+							</div>
+							<button type="button" class="nudge" id="looks-more" aria-label="Show more styles"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
 						</div>
 					</div>
 				</div>
@@ -276,31 +354,62 @@
 						<li><h3>Edit anything</h3><p>Click a scene to change its words, colours, length or transition. Drag scenes to reorder. Undo everything.</p></li>
 						<li><h3>Export</h3><p>Render MP4 or GIF on your PC in 16:9 for YouTube and X, 9:16 for Reels and TikTok, or 1:1 for feeds.</p></li>
 					</ol>
+					<p>Follow the <a href="/guides">screenshot-to-launch-video guide</a> for a complete storyboard, or compare the workflow with <a href="/after-effects-alternative">After Effects for launch videos</a>.</p>
 				</div>
 			</section>
 
-			<section id="templates" aria-labelledby="tpl-h">
-				<div class="wrap">
-					<h2 id="tpl-h">{{TEMPLATE_COUNT}} films to start from.</h2>
-					<p class="intro">Product launches, SaaS demos, developer tools, bumpers, explainers and social cuts. Pick one and your product name, colours and screenshots drop in. Each is adapted from a community motion-design prompt and credits its author.</p>
-					<div class="chips" id="cats" role="group" aria-label="Filter templates">
-						<!--TEMPLATE_FILTERS-->
+		<section id="new" aria-labelledby="new-h">
+			<div class="wrap">
+				<p class="tag-new">New in {{VERSION}}</p>
+				<h2 id="new-h">Smarter films, five new looks.</h2>
+				<ul class="news">
+					<li><h3>Screens for your product</h3><p>The AI writes real-looking product screens with your logo, nav, stats, people and statuses, in your brand colour. No placeholder blocks.</p></li>
+					<li><h3>Studio and Daylight</h3><p>Two premium styles: Studio is dark, Daylight is light. Plus three more: One take, Collage and Sketch.</p></li>
+					<li><h3>Mixtape</h3><p>A recipe that changes style on every scene.</p></li>
+					<li><h3>AI freestyle scenes</h3><p>When no built-in scene fits, the AI designs its own animation.</p></li>
+					<li><h3>A script you can edit</h3><p>Describe the launch, then adjust the AI-written scenes before exporting.</p></li>
+					<li><h3>Surprise me</h3><p>Picks a different style, music and story every time.</p></li>
+				</ul>
+			</div>
+		</section>
+
+		<section id="templates" aria-labelledby="tpl-h">
+			<div class="wrap">
+				<h2 id="tpl-h">{{TEMPLATE_COUNT}} films to start from.</h2>
+				<p class="intro">Start with a <a href="/saas-launch-video">SaaS launch video</a>, an <a href="/app-promo-video">app promo video</a> or a quieter <a href="/templates/brand-film">brand film template</a>. Pick one and your product name, colours and screenshots drop in. Each is adapted from a community motion-design prompt and credits its author.</p>
+				<div class="carousel" data-carousel role="region" aria-roledescription="carousel" aria-label="Featured templates">
+					<ul class="slides" data-track tabindex="0" aria-label="Featured templates, scroll sideways for more">
+<!--TEMPLATE_SLIDES-->
+					</ul>
+					<div class="car-ctl">
+						<button type="button" class="car-btn" data-prev aria-label="Previous template"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+						<button type="button" class="car-btn" data-next aria-label="Next template"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+						<button type="button" class="car-btn" data-pause aria-label="Pause the slideshow" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="3" stroke-linecap="round" /></svg></button>
+						<span class="car-count" data-count aria-hidden="true"></span>
+						<a class="btn ghost-dark" href="/templates">See all {{TEMPLATE_COUNT}} templates</a>
 					</div>
-					<ul class="tpls" id="tpls">
-<!--TEMPLATE_CARDS-->
-					</ul>
 				</div>
-			</section>
+			</div>
+		</section>
 
-			<section id="styles" aria-labelledby="styles-h">
-				<div class="wrap">
-					<h2 id="styles-h">{{STYLE_COUNT}} looks, one click apart.</h2>
-					<p class="intro">A style sets the palette, the type, how words arrive, the transitions and the music. Switch it and the whole film changes; your words stay.</p>
-					<ul class="styles">
-<!--STYLE_CARDS-->
+		<section id="styles" aria-labelledby="styles-h">
+			<div class="wrap">
+				<h2 id="styles-h">{{STYLE_COUNT}} looks, one click apart.</h2>
+				<p class="intro">A style sets the palette, the type, how words arrive, the transitions and the music. Switch it and the whole film changes; your words stay.</p>
+				<div class="carousel" data-carousel role="region" aria-roledescription="carousel" aria-label="Styles">
+					<ul class="slides" data-track tabindex="0" aria-label="Styles, scroll sideways for more">
+<!--STYLE_SLIDES-->
 					</ul>
+					<div class="car-ctl">
+						<button type="button" class="car-btn" data-prev aria-label="Previous style"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+						<button type="button" class="car-btn" data-next aria-label="Next style"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+						<button type="button" class="car-btn" data-pause aria-label="Pause the slideshow" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="3" stroke-linecap="round" /></svg></button>
+						<span class="car-count" data-count aria-hidden="true"></span>
+						<a class="btn ghost-dark" href="/styles">See all {{STYLE_COUNT}} styles in detail</a>
+					</div>
 				</div>
-			</section>
+			</div>
+		</section>
 
 			<section id="inside" aria-labelledby="inside-h">
 				<div class="wrap split">
@@ -309,10 +418,10 @@
 						<p class="intro">Everything renders on your PC, frame by frame, so exports are sharp and repeatable.</p>
 					</div>
 					<dl class="facts">
-						<div><dt>38 scene types</dt><dd>Kinetic type, word swaps, highlights, typewriter, countdowns, stats and charts, timelines, pricing cards, code editors, chats, notifications, laptops, phones, browsers and before/after wipes.</dd></div>
-						<div><dt>Your real UI</dt><dd>Screenshots become extreme close-ups with typing and a cursor click, laptop dives, floating cards and callouts.</dd></div>
+						<div><dt>{{SCENE_COUNT}} scene types</dt><dd>Kinetic type, word swaps, highlights, typewriter, countdowns, stats and charts, timelines, pricing cards, code editors, chats, notifications, laptops, phones, browsers and before/after wipes. When none fits, the AI designs a freestyle scene of its own.</dd></div>
+						<div><dt>Your real UI</dt><dd>Screenshots become extreme close-ups with typing and a cursor click, laptop dives, floating cards and callouts. No screenshots yet? The AI writes real-looking screens for your product, with your logo, nav, stats and people, in your brand colour.</dd></div>
 						<div><dt>Music</dt><dd>Four synthesised tracks, licence-free, with clicks and hits on the beat. Or bring your own song.</dd></div>
-						<div><dt>Writing</dt><dd>A built-in writer works offline with no key. For smarter scripts, add your own DeepSeek, OpenAI, OpenRouter or Anthropic key, or use Claude Code or Codex if you have them.</dd></div>
+						<div><dt>Writing</dt><dd>The AI drafts the scenes, and Surprise me picks a style, music and story. A built-in writer works offline with no key. You can also add your own supported AI provider key, or use Claude Code or Codex if you have them.</dd></div>
 						<div><dt>Export</dt><dd>MP4 and GIF, 16:9, 9:16 and 1:1, with optional motion blur.</dd></div>
 					</dl>
 				</div>
@@ -321,7 +430,7 @@
 			<section id="pricing" aria-labelledby="price-h">
 				<div class="wrap">
 					<h2 id="price-h">Pricing</h2>
-					<p class="intro">Make as many films as you like. Export 3 a month free, or pay once for unlimited.</p>
+					<p class="intro">Make as many films as you like. Your first 3 exports each month have no badge. <a href="/pricing">Compare Free and Pro, including AI limits</a>.</p>
 					<div class="plans">
 						<div class="plan">
 							<h3>Free</h3>
@@ -364,11 +473,11 @@
 					<h2 id="faq-h">Questions</h2>
 					<details><summary>Is Kinetic free?</summary><p>Yes. Every template, style and export format is free, with no account, and your first 3 exports each month are clean. After that, exports carry a small “Made with Kinetic” badge in the corner until the next month. Kinetic Pro gives unlimited clean exports for a one-time payment: $9 for the first 100 buyers, then $19.</p></details>
 					<details><summary>How does Pro work?</summary><p>Buy once and you get a licence key on the next page and by email. Click Activate in Kinetic on that page, or paste the key under Get Pro in the app. One key works on 3 PCs and never expires. Refunds and revocations are handled by Dodo Payments, our payment provider.</p></details>
-					<details><summary>Does it need an internet connection?</summary><p>No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or use an AI key.</p></details>
+					<details><summary>Does it need an internet connection?</summary><p>No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or have the AI write your film.</p></details>
 					<details><summary>Is there a Mac version?</summary><p>Not yet. Kinetic runs on Windows 10 and 11 (64-bit).</p></details>
 					<details><summary>Why does Windows warn me when I install it?</summary><p>The installer is not code-signed yet, so SmartScreen shows a warning. Click <b>More info</b>, then <b>Run anyway</b>. You can check the download against its SHA-256: <code>{{SHA256}}</code></p></details>
 					<details><summary>Can I use the videos commercially?</summary><p>Yes. The videos you export are yours, and the built-in music is synthesised in the app, so it is licence-free.</p></details>
-					<details><summary>Do my screenshots or prompts get uploaded?</summary><p>Not by Kinetic. Your files stay on your PC. If you add an AI key, your prompt and the text of your scenes go to that provider to write the script.</p></details>
+					<details><summary>Do my screenshots or prompts get uploaded?</summary><p>Your screenshots and videos never leave your PC; films render locally. When the AI writes a film, your one-sentence description goes to Kinetic AI (and on to the model provider) to write the script, and descriptions typed on this website are logged so we can see what people try. With your own AI key, it goes to that provider instead. With the built-in offline writer, nothing leaves your PC at all.</p></details>
 				</div>
 			</section>
 
@@ -386,22 +495,12 @@
 		<footer>
 			<div class="wrap">
 				<span>© 2026 Kinetic, a <a href="https://launchloop.tech">LaunchLoop</a> product. Made in Kinetic.</span>
-				<span><!--GUIDE_LINKS--> · <a href="/templates">All templates</a></span>
-				<span><!--GUIDE_LINKS--> · <a href="/templates">All templates</a></span>
+				<span><a href="/guides">Launch video guide</a> · <!--GUIDE_LINKS--> · <a href="/templates">All templates</a> · <a href="/styles">All styles</a> · <a href="/pricing">Pricing</a> · <a href="/about">About</a></span>
 				<span><a href="privacy.html">Privacy</a> · <a href="https://github.com/ShivamBwaj/kinetic">GitHub</a> · Templates adapted from <a href="https://github.com/yihui-dev/awesome-opus5-5-videos" rel="nofollow noopener">awesome-opus5-5-videos</a> · Fonts: Geist, Archivo (OFL)</span>
 			</div>
 		</footer>
 
 		<script>
-			// Template filter.
-			const cats = document.getElementById("cats");
-			cats.addEventListener("click", (e) => {
-				const b = e.target.closest(".chip");
-				if (!b) return;
-				for (const c of cats.children) c.classList.toggle("on", c === b), c.setAttribute("aria-pressed", c === b);
-				for (const li of document.querySelectorAll(".tpl")) li.hidden = b.dataset.cat !== "All" && li.dataset.cat !== b.dataset.cat;
-			});
-
 			// The live film: Kinetic's engine in an iframe, driven over postMessage like the app does.
 			const screen = document.getElementById("screen");
 			const track = document.getElementById("track");
@@ -431,7 +530,8 @@
 				const plan = plans[id];
 				duration = plan.duration;
 				drawTrack(plan);
-				post({ kind: "load", plan, opts: {}, autoplay: !still });
+				// A visitor's own film carries the "Made with Kinetic" badge, like a free export.
+				post({ kind: "load", plan, opts: id === "mine" ? { watermark: true } : {}, autoplay: !still });
 			};
 			const setPlaying = (p) => {
 				playing = p;
@@ -456,7 +556,24 @@
 				if (!b || !plans) return;
 				for (const x of looks.children) x.classList.toggle("on", x === b), x.setAttribute("aria-pressed", x === b);
 				load(b.dataset.style);
+				const lr = looks.getBoundingClientRect(), br = b.getBoundingClientRect();
+				if (br.left < lr.left || br.right > lr.right - 32) looks.scrollBy({ left: br.left - lr.left - 24, behavior: still ? "auto" : "smooth" });
 			});
+			// The style row scrolls sideways; the arrow pages through it and wraps back to the start.
+			const more = document.getElementById("looks-more");
+			const moreState = () => {
+				more.hidden = looks.scrollWidth <= looks.clientWidth + 2;
+				const end = looks.scrollLeft >= looks.scrollWidth - looks.clientWidth - 4;
+				more.setAttribute("aria-label", end ? "Back to the first styles" : "Show more styles");
+				more.style.transform = end ? "scaleX(-1)" : "";
+			};
+			more.onclick = () => {
+				const end = looks.scrollLeft >= looks.scrollWidth - looks.clientWidth - 4;
+				looks.scrollTo({ left: end ? 0 : looks.scrollLeft + looks.clientWidth * 0.7, behavior: still ? "auto" : "smooth" });
+			};
+			looks.addEventListener("scroll", moreState, { passive: true });
+			addEventListener("resize", moreState);
+			moreState();
 			// Start the engine once the hero is on screen; until then the poster frame shows.
 			const start = () => {
 				fetch("engine/plans.json").then((r) => r.json()).then((p) => {
@@ -471,6 +588,48 @@
 			new IntersectionObserver((es, o) => { if (es.some((x) => x.isIntersecting)) { o.disconnect(); start(); } }).observe(screen);
 			// Keep the engine quiet when the film is scrolled away.
 			new IntersectionObserver((es) => { if (frame && plans && !still) post({ kind: es[0].isIntersecting ? "play" : "pause" }); }, { threshold: 0.15 }).observe(screen);
+
+			// Slideshows: scroll-snap rows with prev/next and a counter. They advance on their own unless the
+			// visitor prefers reduced motion, and pause on hover, focus, touch, the pause button or off screen.
+			const ICON_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
+			const ICON_PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>';
+			for (const car of document.querySelectorAll("[data-carousel]")) {
+				const list = car.querySelector("[data-track]");
+				const slides = [...list.children];
+				const count = car.querySelector("[data-count]");
+				const pauseBtn = car.querySelector("[data-pause]");
+				const stepW = () => (slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : list.clientWidth) || 1;
+				const index = () => Math.round(list.scrollLeft / stepW());
+				const atEnd = () => list.scrollLeft >= list.scrollWidth - list.clientWidth - 4;
+				const go = (i) => list.scrollTo({ left: Math.max(0, i) * stepW(), behavior: still ? "auto" : "smooth" });
+				const show = () => { count.textContent = `${atEnd() ? slides.length : Math.min(slides.length, index() + 1)} / ${slides.length}`; };
+				let touched = 0;
+				car.addEventListener("pointerdown", () => { touched = Date.now(); });
+				car.addEventListener("keydown", () => { touched = Date.now(); });
+				car.querySelector("[data-prev]").onclick = () => go(list.scrollLeft <= 4 ? slides.length : index() - 1);
+				car.querySelector("[data-next]").onclick = () => go(atEnd() ? 0 : index() + 1);
+				list.addEventListener("scroll", show, { passive: true });
+				addEventListener("resize", show);
+				show();
+				if (still || slides.length < 2) continue;
+				let hover = false, seen = false, stopped = false;
+				const setStopped = (v) => {
+					stopped = v;
+					pauseBtn.setAttribute("aria-label", v ? "Play the slideshow" : "Pause the slideshow");
+					pauseBtn.innerHTML = v ? ICON_PLAY : ICON_PAUSE;
+				};
+				pauseBtn.hidden = false;
+				pauseBtn.onclick = () => setStopped(!stopped);
+				car.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hover = true; });
+				car.addEventListener("pointerleave", () => { hover = false; });
+				list.addEventListener("touchstart", () => setStopped(true), { passive: true });
+				new IntersectionObserver((es) => { seen = es[0].isIntersecting; }, { threshold: 0.4 }).observe(list);
+				setInterval(() => {
+					const a = document.activeElement;
+					const focused = car.contains(a) && a !== pauseBtn;
+					if (!hover && !focused && seen && !stopped && !document.hidden && Date.now() - touched > 4000) go(atEnd() ? 0 : index() + 1);
+				}, 4500);
+			}
 		</script>
 			<script>
 			// Founding ladder: live count from Dodo sales; flips the card to $19 once 100 are sold.
@@ -494,5 +653,126 @@
 				}
 			}).catch(() => {});
 		</script>
-</body>
+		<script>
+			// Try it here: a visitor's sentence becomes a film in the hero, written by Kinetic AI and
+			// played by the same engine. The writer bundle (engine/try.js) loads on first focus.
+			(() => {
+				const form = document.getElementById("try");
+				const input = document.getElementById("try-in");
+				const go = document.getElementById("try-go");
+				const busy = document.getElementById("try-busy");
+				const busyText = document.getElementById("try-busy-text");
+				const done = document.getElementById("try-done");
+				const doneText = document.getElementById("try-done-text");
+				const note = document.getElementById("try-note");
+				let lib = null;
+				let mine = null;
+				let outOfFilms = false;
+				// After a visitor's film is written, the style row restyles THEIR film: same script,
+				// re-planned in the browser, so it costs nothing.
+				looks.addEventListener(
+					"click",
+					(e) => {
+						const b = e.target.closest(".look");
+						if (!b || !mine || !window.KineticTry) return;
+						e.stopImmediatePropagation();
+						for (const x of looks.children) x.classList.toggle("on", x === b), x.setAttribute("aria-pressed", x === b);
+						plans.mine = window.KineticTry.restyle(mine.script, b.dataset.style);
+						load("mine");
+						doneText.textContent = `Your film for ${mine.name}, now in the ${b.textContent.trim()} style.`;
+						window.va?.("event", { name: "try_restyle" });
+					},
+					true,
+				);
+				// Phones and Macs can't install the Windows app: let them send the link to their PC.
+				const isWinDesktop = /Windows NT/.test(navigator.userAgent) && !/Mobile|Android/.test(navigator.userAgent);
+				const sendBtn = document.getElementById("try-send");
+				if (!isWinDesktop && sendBtn) {
+					sendBtn.hidden = false;
+					sendBtn.addEventListener("click", async () => {
+						const url = "https://kinetic.launchloop.tech/download";
+						window.va?.("event", { name: "send_link" });
+						try {
+							if (navigator.share) return await navigator.share({ title: "Kinetic for Windows", text: "Download Kinetic on my PC: launch videos from one sentence", url });
+							await navigator.clipboard.writeText(url);
+							sendBtn.textContent = "Link copied. Open it on your Windows PC";
+						} catch {}
+					});
+				}
+				const loadLib = () =>
+					(lib ??= new Promise((ok, bad) => {
+						const s = document.createElement("script");
+						s.src = "engine/try.js?v={{BUILD}}";
+						s.onload = () => ok(window.KineticTry);
+						s.onerror = () => bad(new Error("Couldn't load the writer. Check your connection and try again."));
+						document.head.appendChild(s);
+					}));
+				input.addEventListener("focus", () => loadLib().catch(() => {}), { once: true });
+				for (const b of document.querySelectorAll("[data-ex]"))
+					b.addEventListener("click", () => {
+						input.value = b.dataset.ex;
+						input.focus();
+					});
+				input.addEventListener("keydown", (e) => {
+					if (e.key === "Enter" && !e.shiftKey) {
+						e.preventDefault();
+						form.requestSubmit();
+					}
+				});
+				const steps = ["Reading your sentence…", "Writing the scenes…", "Designing your product's screens…", "Picking a style and music…"];
+				form.addEventListener("submit", async (e) => {
+					e.preventDefault();
+					if (outOfFilms) return void (location.href = "/download");
+					const text = input.value.trim();
+					if (text.length < 8) {
+						note.textContent = "Write a sentence about your product first, like the examples.";
+						input.focus();
+						return;
+					}
+					go.disabled = true;
+					done.hidden = true;
+					done.classList.remove("err");
+					busy.hidden = false;
+					let i = 0;
+					busyText.textContent = steps[0];
+					const tick = setInterval(() => (busyText.textContent = steps[Math.min(steps.length - 1, ++i)]), 1600);
+					document.getElementById("screen").scrollIntoView({ behavior: "smooth", block: "nearest" });
+					try {
+						const K = await loadLib();
+						const r = await K.writeFilm(text);
+						plans.mine = r.plan;
+						mine = r;
+						if (!frame) start();
+						const show = () => (plans ? load("mine") : setTimeout(show, 200));
+						show();
+						for (const x of looks.children) x.classList.remove("on"), x.setAttribute("aria-pressed", "false");
+						doneText.textContent = `Your film for ${r.name}, in the ${r.recipe} style, written in seconds by Kinetic AI.`;
+						done.hidden = false;
+						go.textContent = r.left === 0 ? "Download to make more" : "✦ Make another take";
+						outOfFilms = r.left === 0;
+						note.textContent = r.left === 0 ? "That was your last free film on the site. Try it in other styles below (free), or download Kinetic to make more and export them." : r.left != null ? `${r.left} free ${r.left === 1 ? "film" : "films"} left on the site. Or try this one in other styles below, free.` : "Try it in other styles below, free.";
+						document.getElementById("looks-h").textContent = `Your film, in ${looks.children.length} looks. Tap one (free, no AI needed):`;
+						window.va?.("event", { name: "try_film" });
+					} catch (err) {
+						// Big and obvious: the result card shows what happened and what to do next.
+						doneText.textContent = err.limit ? err.message : `Something went wrong: ${err.message} Press the button to try again.`;
+						done.hidden = false;
+						done.classList.add("err");
+						note.textContent = "";
+						if (err.limit) {
+							outOfFilms = true;
+							go.textContent = "Download to make more";
+						}
+						try {
+							navigator.sendBeacon?.("/api/track", new Blob([JSON.stringify({ e: "tryfail", reason: String(err.message || err).slice(0, 120) })], { type: "application/json" }));
+						} catch {}
+					} finally {
+						clearInterval(tick);
+						busy.hidden = true;
+						go.disabled = false;
+					}
+				});
+			})();
+		</script>
+	</body>
 </html>

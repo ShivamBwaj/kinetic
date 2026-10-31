@@ -10,18 +10,18 @@
 }
 @font-face {
 	font-family: "Archivo";
-	src: url("fonts/Archivo-Variable.ttf") format("truetype");
+	src: url("fonts/Archivo-Variable.woff2") format("woff2"), url("fonts/Archivo-Variable.ttf") format("truetype");
 	font-weight: 100 900;
 	font-stretch: 62% 125%;
 }
 @font-face {
 	font-family: "Instrument Serif";
-	src: url("fonts/InstrumentSerif-Regular.ttf") format("truetype");
+	src: url("fonts/InstrumentSerif-Regular.woff2") format("woff2"), url("fonts/InstrumentSerif-Regular.ttf") format("truetype");
 	font-weight: 400;
 }
 @font-face {
 	font-family: "Instrument Serif";
-	src: url("fonts/InstrumentSerif-Italic.ttf") format("truetype");
+	src: url("fonts/InstrumentSerif-Italic.woff2") format("woff2"), url("fonts/InstrumentSerif-Italic.ttf") format("truetype");
 	font-weight: 400;
 	font-style: italic;
 }
@@ -364,4 +364,44 @@ img.fill {
 	background: #c6f36b;
 	color: #000;
 	font-weight: 800;
+}
+
+/* Collage: everything looks cut out of paper and taped down. */
+.look-collage .display,
+.look-collage .bold {
+	filter: drop-shadow(0.06em 0.07em 0 rgba(0, 0, 0, 0.22));
+}
+.look-collage .card,
+.look-collage .phone {
+	outline: calc(10px * var(--s, 1)) solid #fffdf7;
+	box-shadow: 0.4em 0.6em 0 rgba(0, 0, 0, 0.18) !important;
+	rotate: -1.6deg;
+}
+.look-collage .card::after {
+	content: "";
+	position: absolute;
+	top: -0.9em;
+	left: 50%;
+	width: 7em;
+	height: 1.8em;
+	translate: -50% 0;
+	rotate: -4deg;
+	background: rgba(255, 244, 200, 0.7);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+	z-index: 5;
+}
+
+/* Sketch: ink outlines that boil, no soft shadows. */
+.look-sketch .cam {
+	filter: url(#boil);
+}
+.look-sketch .card,
+.look-sketch .phone,
+.look-sketch .mock {
+	box-shadow: none !important;
+	border: 3px solid #1d1d1f;
+}
+.look-sketch .display,
+.look-sketch .bold {
+	-webkit-text-stroke: 0.012em #1d1d1f;
 }

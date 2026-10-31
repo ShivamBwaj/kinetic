@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Downloading Kinetic</title>
+		<meta name="description" content="Your Kinetic download for Windows is starting. How to get past the Windows warning, and how to make your first launch video." />
+		<link rel="canonical" href="https://kinetic.launchloop.tech/download" />
+		<link rel="icon" href="media/icon.svg" type="image/svg+xml" />
+		<meta property="og:title" content="Download Kinetic for Windows" />
+		<meta property="og:description" content="Type one sentence, get a motion-graphics launch video. Free to try." />
+		<meta property="og:image" content="https://kinetic.launchloop.tech/media/og-v2.jpg" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:image" content="https://kinetic.launchloop.tech/media/og-v2.jpg" />
+		<style>
+			@font-face { font-family: "Archivo"; src: url("engine/fonts/Archivo-Variable.woff2") format("woff2"), url("engine/fonts/Archivo-Variable.ttf") format("truetype"); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
+			@font-face { font-family: "Geist"; src: url("engine/fonts/Geist-Variable.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+			@font-face { font-family: "Geist Mono"; src: url("engine/fonts/GeistMono-Variable.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+			* { box-sizing: border-box; }
+			body { margin: 0; min-height: 100vh; background: #2433ff; color: #fff; font: 17px/1.55 "Geist", system-ui, sans-serif; display: flex; flex-direction: column; }
+			a { color: inherit; }
+			header, main, footer { width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; }
+			header { padding-top: 22px; }
+			.logo { display: inline-flex; gap: 10px; align-items: center; font: 800 21px/1 "Archivo", sans-serif; font-stretch: 112%; text-decoration: none; }
+			.mark { width: 30px; height: 30px; border-radius: 8px; background: #c6f36b; color: #000; display: grid; place-items: center; font-size: 17px; }
+			main { flex: 1; padding-top: clamp(32px, 6vw, 72px); padding-bottom: 56px; }
+			h1 { font: 900 clamp(32px, 4.6vw, 54px)/0.98 "Archivo", sans-serif; font-stretch: 116%; letter-spacing: -0.035em; margin: 0 0 16px; }
+			h2 { font: 850 clamp(22px, 2.6vw, 30px)/1.05 "Archivo", sans-serif; font-stretch: 112%; letter-spacing: -0.02em; margin: 0 0 14px; }
+			.lede { font-size: 19px; color: rgba(255, 255, 255, 0.9); margin: 0 0 22px; max-width: 36em; }
+			.status { display: flex; gap: 12px; align-items: center; background: rgba(0, 0, 0, 0.18); border-radius: 14px; padding: 14px 18px; margin: 0 0 40px; font-size: 16px; }
+			.spin { width: 18px; height: 18px; border: 3px solid rgba(255, 255, 255, 0.3); border-top-color: #c6f36b; border-radius: 50%; animation: s 0.8s linear infinite; flex: none; }
+			.done .spin { animation: none; border-color: #c6f36b; background: #c6f36b; }
+			@keyframes s { to { transform: rotate(1turn); } }
+			.status a { font-weight: 650; }
+			.card { background: #fff; color: #0b0b12; border-radius: 20px; padding: clamp(20px, 3vw, 32px); margin: 0 0 22px; }
+			.card .muted { color: #555; }
+			.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 18px 0 0; padding: 0; list-style: none; counter-reset: n; }
+			.steps li { background: #f2f3f7; border-radius: 14px; padding: 16px; counter-increment: n; font-size: 15.5px; }
+			.steps li::before { content: counter(n); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #2433ff; color: #fff; font: 800 14px/1 "Geist", sans-serif; margin: 0 0 10px; }
+			.steps b { display: block; font-size: 16px; margin: 0 0 4px; }
+			.mock { margin: 12px 0 0; border-radius: 8px; overflow: hidden; font: 12.5px/1.35 "Segoe UI", system-ui, sans-serif; border: 1px solid #d6d8e0; }
+			.mock .bar { background: #0b4fbf; color: #fff; padding: 10px 12px; }
+			.mock .bar strong { display: block; font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+			.mock .foot { background: #fff; padding: 8px 12px; display: flex; justify-content: flex-end; gap: 6px; }
+			.mock .k { padding: 4px 10px; border: 1px solid #aaa; border-radius: 3px; background: #f3f3f3; }
+			.mock .hl { outline: 3px solid #ff3d7f; outline-offset: 1px; }
+			.mock u { color: #fff; }
+			.edge { background: #fff; padding: 10px 12px; color: #222; }
+			.why { font-size: 14.5px; color: #555; margin: 16px 0 0; }
+			.sale { background: #c6f36b; color: #000; }
+			.sale h2 { margin-bottom: 8px; }
+			.price { font: 900 44px/1 "Archivo", sans-serif; font-stretch: 112%; margin: 6px 0 12px; }
+			.price s { font-size: 24px; opacity: 0.5; margin-left: 6px; }
+			.ladder { height: 12px; background: rgba(0, 0, 0, 0.12); border-radius: 99px; overflow: hidden; margin: 6px 0 8px; max-width: 420px; }
+			.ladder i { display: block; height: 100%; width: 2%; background: #000; border-radius: 99px; }
+			.btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; font: 650 16px/1 "Geist", sans-serif; text-decoration: none; border: 2px solid currentColor; cursor: pointer; background: transparent; color: inherit; }
+			.btn.dark { background: #000; color: #fff; border-color: #000; }
+			.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 16px 0 0; }
+			ul.first { margin: 12px 0 0; padding-left: 20px; }
+			ul.first li { margin-bottom: 6px; }
+			footer { padding-bottom: 30px; font-size: 15px; color: rgba(255, 255, 255, 0.78); }
+			:focus-visible { outline: 3px solid #c6f36b; outline-offset: 3px; }
+			@media (max-width: 720px) { .steps { grid-template-columns: 1fr; } }
+		</style>
+		<script defer src="/_vercel/insights/script.js"></script>
+	</head>
+	<body>
+		<header><a class="logo" href="./"><span class="mark" aria-hidden="true">K</span>Kinetic</a></header>
+		<main>
+			<h1>Thanks for trying Kinetic.</h1>
+			<p class="lede">Your download is starting. It's one installer for Windows 10 and 11, about 140 MB. Nothing to sign up for.</p>
+			<div class="status" id="status" role="status">
+				<span class="spin" aria-hidden="true"></span>
+				<span id="status-text">Starting your download… If nothing happens, <a href="/api/download" id="again">click here to download</a>.</span>
+			</div>
+
+			<section class="card" aria-labelledby="warn">
+				<h2 id="warn">Windows will probably warn you. That's expected.</h2>
+				<p class="muted">Kinetic is made by one person and the installer isn't code-signed yet (a certificate costs hundreds of dollars a year). So your browser and Windows don't recognise it, and show a warning the first time. Here's how to get past it:</p>
+				<ol class="steps">
+					<li>
+						<b>In your browser</b>
+						Edge or Chrome may say <i>"isn't commonly downloaded"</i>. Open the downloads list, click <b style="display:inline">…</b> then <b style="display:inline">Keep</b> (Edge: <b style="display:inline">Show more → Keep anyway</b>).
+						<div class="mock" aria-hidden="true"><div class="edge">Kinetic-Setup.exe isn't commonly downloaded. Make sure you trust it before you open it.<div style="margin-top:6px;display:flex;gap:6px"><span class="k hl">Keep</span><span class="k">Delete</span></div></div></div>
+					</li>
+					<li>
+						<b>Run the installer</b>
+						A blue <i>"Windows protected your PC"</i> box appears. Click <b style="display:inline">More info</b>.
+						<div class="mock" aria-hidden="true"><div class="bar"><strong>Windows protected your PC</strong>Microsoft Defender SmartScreen prevented an unrecognised app from starting.<br /><u class="hl">More info</u></div><div class="foot"><span class="k">Don't run</span></div></div>
+					</li>
+					<li>
+						<b>Then Run anyway</b>
+						The publisher shows as <i>Unknown</i>. Click <b style="display:inline">Run anyway</b>. Kinetic installs in a few seconds and opens.
+						<div class="mock" aria-hidden="true"><div class="bar"><strong>Windows protected your PC</strong>App: Kinetic-Setup.exe<br />Publisher: Unknown publisher</div><div class="foot"><span class="k hl">Run anyway</span><span class="k">Don't run</span></div></div>
+					</li>
+				</ol>
+				<p class="why">Want to check it first? The <a href="https://github.com/ShivamBwaj/kinetic/releases" style="color:#2433ff">official GitHub releases</a> list the installer's SHA-256 hash so you can confirm the file is the one we published. See the <a href="/guides" style="color:#2433ff">launch video workflow</a> before you start.</p>
+			</section>
+
+			<section class="card" aria-labelledby="first">
+				<h2 id="first">Your first video, in about two minutes</h2>
+				<ul class="first">
+					<li><b>Type what you're launching</b> on the welcome screen, one or two sentences. Add your site URL or a few screenshots if you have them.</li>
+					<li><b>Click Write my video.</b> Kinetic AI writes the scenes, picks a style and music, and plays it. You get 3 free AI-written films.</li>
+					<li><b>Click any scene to change its words</b>, then <b>Export</b> an MP4 for X, YouTube, Reels or TikTok. 3 clean exports a month are free.</li>
+				</ul>
+			</section>
+
+			<section class="card sale" aria-labelledby="sale">
+				<h2 id="sale">Founding sale: Pro is $9, once.</h2>
+				<div class="price" id="price">$9<s>$19</s></div>
+				<div class="ladder" aria-hidden="true"><i id="bar"></i></div>
+				<p id="ladder-text">For the first 100 buyers only. After that Pro is $19.</p>
+				<p>Unlimited exports with no badge, 100 AI-written films a month, every template and update. One payment, 3 PCs, no subscription.</p>
+				<div class="row">
+					<a class="btn dark" href="/buy" id="buy">Get Pro for $9</a>
+					<span>or try it free first, and upgrade from inside the app.</span>
+				</div>
+			</section>
+		</main>
+		<footer>Stuck installing? Email <a href="mailto:shivambwaj@gmail.com?subject=Kinetic%20install">shivambwaj@gmail.com</a> · <a href="./">Back to Kinetic</a> · <a href="/privacy">Privacy</a></footer>
+		<script>
+			(() => {
+				// Start the file once. /api/download logs the download and redirects to the GitHub release.
+				const status = document.getElementById("status");
+				const text = document.getElementById("status-text");
+				setTimeout(() => {
+					location.href = "/api/download";
+					setTimeout(() => {
+						status.classList.add("done");
+						text.innerHTML = 'Download started. Check your browser\'s downloads (Ctrl+J). Didn\'t get it? <a href="/api/download">Download again</a>.';
+					}, 2500);
+				}, 700);
+				fetch("/api/founding")
+					.then((r) => r.json())
+					.then((f) => {
+						if (!f.open) {
+							document.getElementById("sale").textContent = "Kinetic Pro: $19, once.";
+							document.getElementById("price").textContent = "$19";
+							document.getElementById("ladder-text").textContent = "All 100 founding licences are taken. Thank you to everyone who got one.";
+							document.getElementById("bar").style.width = "100%";
+							document.getElementById("buy").textContent = "Get Pro for $19";
+							return;
+						}
+						document.getElementById("bar").style.width = Math.max(2, (f.sold / f.cap) * 100) + "%";
+						document.getElementById("ladder-text").textContent = `${f.sold} of ${f.cap} founding licences taken, ${f.left} left. After that Pro is $19.`;
+					})
+					.catch(() => {});
+			})();
+		</script>
+	</body>
+</html>

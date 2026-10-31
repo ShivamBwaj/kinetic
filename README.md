@@ -5,7 +5,11 @@ Prompt to motion launch video, on your PC. Type what you're launching, add your 
 - **Website:** https://kinetic.launchloop.tech/
 - **Download (Windows 10/11, 64-bit):** [Kinetic-Setup.exe](https://github.com/ShivamBwaj/kinetic/releases/latest/download/Kinetic-Setup.exe)
 
-This repository holds the website and the release downloads. Kinetic is free while in early access.
+This repository holds the website and release downloads. Kinetic has a free plan with 3 clean exports per month. Pro is one payment: $9 for the first 100 buyers, then $19. [Compare plans](https://kinetic.launchloop.tech/pricing).
+
+- [Launch video workflow](https://kinetic.launchloop.tech/guides)
+- [Templates](https://kinetic.launchloop.tech/templates)
+- [Template duration dataset and method](https://kinetic.launchloop.tech/research/launch-video-template-data)
 
 ## Install
 

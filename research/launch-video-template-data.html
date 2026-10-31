@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>40 Kinetic launch video templates: duration and scene data</title>
+		<meta name="description" content="Reproducible analysis of 40 Kinetic templates: planned video lengths, scene counts and native formats. Download the CSV and inspect each live preview." />
+		<link rel="canonical" href="https://kinetic.launchloop.tech/research/launch-video-template-data" />
+		<meta name="theme-color" content="#2433ff" />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Kinetic" />
+		<meta property="og:url" content="https://kinetic.launchloop.tech/research/launch-video-template-data" />
+		<meta property="og:title" content="40 Kinetic launch video templates: duration and scene data" />
+		<meta property="og:description" content="Reproducible analysis of 40 Kinetic templates: planned video lengths, scene counts and native formats. Download the CSV and inspect each live preview." />
+		<meta property="og:image" content="https://kinetic.launchloop.tech/media/og-v2.jpg" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="40 Kinetic launch video templates: duration and scene data" />
+		<meta name="twitter:description" content="Reproducible analysis of 40 Kinetic templates: planned video lengths, scene counts and native formats. Download the CSV and inspect each live preview." />
+		<meta name="twitter:image" content="https://kinetic.launchloop.tech/media/og-v2.jpg" />
+		<link rel="icon" href="/media/icon.svg" type="image/svg+xml" />
+		<link rel="stylesheet" href="/media/site.css" />
+		<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kinetic","item":"https://kinetic.launchloop.tech/"},{"@type":"ListItem","position":2,"name":"Template data","item":"https://kinetic.launchloop.tech/research/launch-video-template-data"}]}</script>
+		<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+		<script defer src="/_vercel/insights/script.js"></script>
+		<script defer src="/media/seo.js"></script>
+	</head>
+	<body>
+		<a class="skip" href="#main">Skip to content</a>
+		<header class="top">
+			<div class="wrap">
+				<nav aria-label="Main">
+					<a class="logo" href="/" aria-label="Kinetic home"><span class="mark" aria-hidden="true">K</span>Kinetic</a>
+					<a class="nl" href="/templates">Templates</a>
+					<a class="nl" href="/styles">Styles</a>
+					<a class="nl" href="/guides">Guides</a>
+					<a class="nl" href="/pricing">Pricing</a>
+					<a class="btn dl" href="/download">Download</a>
+				</nav>
+			</div>
+		</header>
+		<main id="main">
+			<div class="top">
+				<div class="wrap page-hero">
+					<p class="crumbs"><a href="/">Kinetic</a> / Template data</p>
+<h1>How long are Kinetic's video templates?</h1><p class="lede">We measured every template in Kinetic 0.4.0, using the same timeline planner that drives preview and export. Here are the lengths, scene counts and starting formats.</p><div class="cta"><a class="btn dl" href="/media/launch-video-templates.csv" download>Download the CSV</a><a class="btn ghost" href="/templates">Preview the templates</a></div>
+				</div>
+			</div>
+<section><div class="wrap prose"><h2>The findings</h2><ul><li>The median planned video length across 40 Kinetic templates is 13.4 seconds.</li><li>The shortest planned template is 7.3 seconds; the longest is 20.3 seconds.</li><li>31 of 40 templates start in 16:9 format.</li><li>3 of 40 templates start in 9:16 format.</li><li>6 of 40 templates start in 1:1 format.</li></ul><p>These describe Kinetic's own library. They are not a sample of all launch videos, user exports, render-speed benchmarks or evidence of which length converts best. You can retime a template and export it in another shape.</p><h2>How we measured</h2><p>The build loads every template in this release, applies the same fictional sample brand, and runs the app's timeline planner at the template's native aspect ratio. The reported duration includes the planner's half-beat end tail. The planner accounts for each scene's beat count, tempo and pace setting. Values in the dataset retain three decimal places; summary figures are rounded to one.</p><p>The table links to the same template's live engine preview. For raw observations, use the <a href="/media/launch-video-templates.csv">CSV dataset</a> or <a href="/media/launch-video-templates.json">JSON dataset</a>. CSV SHA-256: <code class="data-hash">1c0a13ecf85f125477d7e0f7ee1e579390f0bd8197486db76266827680db18f5</code>.</p></div></section>
+		<section><div class="wrap"><h2>Every template in the sample</h2><p class="comparison-hint">Scroll sideways to see all measurements.</p><div class="comparison" role="region" aria-label="Template duration and scene data" tabindex="0"><table><caption>Kinetic 0.4.0; planned duration, not render time.</caption><thead><tr><th scope="col">Template</th><th scope="col">Format</th><th scope="col">Scenes</th><th scope="col">BPM</th><th scope="col">Seconds</th></tr></thead><tbody><tr><th scope="row"><a href="/templates/saas-launch">SaaS launch</a></th><td>16:9</td><td>9</td><td>122</td><td>18.0</td></tr><tr><th scope="row"><a href="/templates/nine-beats">Nine-beat launch</a></th><td>16:9</td><td>9</td><td>120</td><td>19.3</td></tr><tr><th scope="row"><a href="/templates/keynote-reveal">Keynote reveal</a></th><td>16:9</td><td>7</td><td>110</td><td>17.7</td></tr><tr><th scope="row"><a href="/templates/apple-film">Apple-style product film</a></th><td>16:9</td><td>7</td><td>108</td><td>20.3</td></tr><tr><th scope="row"><a href="/templates/agency-grade">The $3,000 launch</a></th><td>16:9</td><td>7</td><td>124</td><td>13.8</td></tr><tr><th scope="row"><a href="/templates/one-shape-launch">One-shape launch</a></th><td>1:1</td><td>4</td><td>120</td><td>12.3</td></tr><tr><th scope="row"><a href="/templates/brand-film">Brand film</a></th><td>16:9</td><td>6</td><td>104</td><td>18.8</td></tr><tr><th scope="row"><a href="/templates/product-demo">Product demo</a></th><td>16:9</td><td>7</td><td>118</td><td>16.0</td></tr><tr><th scope="row"><a href="/templates/use-case-blitz">Use-case blitz</a></th><td>16:9</td><td>7</td><td>128</td><td>10.1</td></tr><tr><th scope="row"><a href="/templates/business-explainer">Business explainer</a></th><td>16:9</td><td>7</td><td>118</td><td>16.5</td></tr><tr><th scope="row"><a href="/templates/agentic-analytics">Ask your data</a></th><td>16:9</td><td>6</td><td>124</td><td>13.8</td></tr><tr><th scope="row"><a href="/templates/feature-drop-ui">Feature drop</a></th><td>16:9</td><td>6</td><td>120</td><td>12.3</td></tr><tr><th scope="row"><a href="/templates/dev-tool-launch">Developer tool launch</a></th><td>16:9</td><td>6</td><td>126</td><td>13.1</td></tr><tr><th scope="row"><a href="/templates/neon-launch">Black + neon</a></th><td>16:9</td><td>6</td><td>128</td><td>12.0</td></tr><tr><th scope="row"><a href="/templates/release-hype">Release hype reel</a></th><td>16:9</td><td>6</td><td>132</td><td>8.4</td></tr><tr><th scope="row"><a href="/templates/agent-explainer">How an agent works</a></th><td>16:9</td><td>6</td><td>112</td><td>15.8</td></tr><tr><th scope="row"><a href="/templates/identity-bumper">Street-poster bumper</a></th><td>1:1</td><td>6</td><td>128</td><td>10.5</td></tr><tr><th scope="row"><a href="/templates/beat-square">Beat-synced square</a></th><td>1:1</td><td>6</td><td>118</td><td>9.9</td></tr><tr><th scope="row"><a href="/templates/studio-reel">Studio résumé reel</a></th><td>16:9</td><td>6</td><td>120</td><td>13.8</td></tr><tr><th scope="row"><a href="/templates/designer-showreel">Looping showreel</a></th><td>16:9</td><td>7</td><td>104</td><td>11.8</td></tr><tr><th scope="row"><a href="/templates/ui-morph-reel">UI morph reel</a></th><td>16:9</td><td>2</td><td>120</td><td>11.3</td></tr><tr><th scope="row"><a href="/templates/dark-ui-reel">Dark-mode UI motion</a></th><td>16:9</td><td>4</td><td>120</td><td>10.3</td></tr><tr><th scope="row"><a href="/templates/music-app">Music app drop</a></th><td>16:9</td><td>6</td><td>120</td><td>13.8</td></tr><tr><th scope="row"><a href="/templates/proof-in-motion">Proof in motion</a></th><td>1:1</td><td>7</td><td>100</td><td>15.3</td></tr><tr><th scope="row"><a href="/templates/science-explainer">Science explainer</a></th><td>16:9</td><td>6</td><td>108</td><td>15.3</td></tr><tr><th scope="row"><a href="/templates/kinetic-text">Kinetic text explainer</a></th><td>16:9</td><td>6</td><td>120</td><td>10.8</td></tr><tr><th scope="row"><a href="/templates/how-to">Step-by-step how-to</a></th><td>16:9</td><td>6</td><td>108</td><td>14.7</td></tr><tr><th scope="row"><a href="/templates/recipe-card">Recipe film</a></th><td>9:16</td><td>4</td><td>100</td><td>11.7</td></tr><tr><th scope="row"><a href="/templates/spoken-word">Spoken-word film</a></th><td>1:1</td><td>5</td><td>96</td><td>16.6</td></tr><tr><th scope="row"><a href="/templates/tiny-story">Tiny story</a></th><td>16:9</td><td>6</td><td>110</td><td>13.9</td></tr><tr><th scope="row"><a href="/templates/company-history">Company history</a></th><td>16:9</td><td>6</td><td>112</td><td>12.6</td></tr><tr><th scope="row"><a href="/templates/history-timeline">History timeline</a></th><td>16:9</td><td>5</td><td>124</td><td>8.0</td></tr><tr><th scope="row"><a href="/templates/progress-montage">Progress montage</a></th><td>16:9</td><td>5</td><td>128</td><td>7.3</td></tr><tr><th scope="row"><a href="/templates/waitlist-trailer">Waitlist trailer</a></th><td>1:1</td><td>7</td><td>104</td><td>15.3</td></tr><tr><th scope="row"><a href="/templates/social-cut">Vertical launch cut</a></th><td>9:16</td><td>6</td><td>124</td><td>8.5</td></tr><tr><th scope="row"><a href="/templates/fifteen-second-ad">15-second ad</a></th><td>9:16</td><td>5</td><td>110</td><td>7.4</td></tr><tr><th scope="row"><a href="/templates/hiring-film">Hiring film</a></th><td>16:9</td><td>5</td><td>104</td><td>14.1</td></tr><tr><th scope="row"><a href="/templates/year-in-review">Year in review</a></th><td>16:9</td><td>7</td><td>120</td><td>14.8</td></tr><tr><th scope="row"><a href="/templates/metrics-flex">Metrics flex</a></th><td>16:9</td><td>5</td><td>126</td><td>9.8</td></tr><tr><th scope="row"><a href="/templates/pricing-launch">Pricing announcement</a></th><td>16:9</td><td>4</td><td>118</td><td>8.9</td></tr></tbody></table></div></div></section>
+		<section><div class="wrap prose"><h2>Use the data for your storyboard</h2><p>Pick the <a href="/templates/brand-film">brand film template</a> for an introduction or a <a href="/saas-launch-video">SaaS launch video</a> when your interface carries the story. The <a href="/guides">screenshot-to-video guide</a> explains how to adapt the scenes. Check <a href="/pricing">Free and Pro limits</a> before exporting a batch.</p><h2>Citing this analysis</h2><p>Cite this page as “Kinetic template-library analysis, version 0.4.0” and include the version with any quoted number. The downloadable data and visible table let readers check the calculation. Keep a copy of the CSV with your citation if you need to preserve this release's snapshot.</p></div></section>
+			<section class="band">
+				<div class="wrap">
+					<h2>Make yours this afternoon.</h2>
+					<p>Kinetic is free for Windows 10 and 11, with 3 clean exports a month. Pro is one payment for unlimited clean exports, no subscription: $9 for the first 100 buyers, then $19. <a href="/pricing">Compare plans and AI limits</a>.</p>
+					<div class="cta"><a class="btn dl" href="/download">Download Kinetic 0.4.0</a><a class="btn ghost" href="/buy">Get Pro</a></div>
+				</div>
+			</section>
+		</main>
+		<footer>
+			<div class="wrap">
+				<span>© 2026 Kinetic, a <a href="https://launchloop.tech">LaunchLoop</a> product. Made in Kinetic.</span>
+				<span class="guides"><a href="/guides">Launch video guide</a><a href="/product-hunt-launch-video">Product Hunt video</a><a href="/saas-launch-video">SaaS launch video</a><a href="/app-promo-video">App promo video</a><a href="/vertical-launch-video">Reels and Shorts</a><a href="/after-effects-alternative">After Effects alternative</a><a href="/templates">All templates</a><a href="/styles">All styles</a><a href="/research/launch-video-template-data">Template duration data</a><a href="/pricing">Pricing</a><a href="/about">About</a><a href="/privacy">Privacy</a></span>
+			</div>
+		</footer>
+	</body>
+</html>

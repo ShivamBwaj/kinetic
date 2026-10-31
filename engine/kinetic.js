@@ -14,7 +14,7 @@
 	const cubicInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 	const quartOut = (t) => 1 - (1 - clamp(t)) ** 4;
 	/** Film-wide motion tuning from the plan (snap, bounce, transition curve). Neutral by default. */
-	let M = { snap: 1, bounce: 1, curve: null };
+	let M = { snap: 1, bounce: 1, curve: null, camera: "push" };
 	/** CSS-style cubic-bezier(x1, y1, x2, y2) as a function of progress 0..1 (Newton, then bisection). */
 	const bezier = ([x1, y1, x2, y2]) => {
 		const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
@@ -95,6 +95,12 @@
 
 	/** Largest font size (px) at which node fits maxW x maxH, wrapping allowed. */
 	const fit = (node, maxW, maxH, hi = 600, lo = 12) => {
+		const ts = plan?.look?.typeScale ?? 1;
+		if (ts !== 1 && !node.closest?.(".mock")) {
+			maxW *= Math.min(1, ts + 0.15);
+			maxH *= ts;
+			hi *= ts;
+		}
 		node.style.maxWidth = px(maxW);
 		let a = lo;
 		let b = hi;
@@ -110,6 +116,9 @@
 	};
 	/** Single-line fit by width (and height). */
 	const fitLine = (node, maxW, maxH, hi = 900) => {
+		const ts = plan?.look?.typeScale ?? 1;
+		maxW *= ts;
+		maxH *= ts;
 		node.style.whiteSpace = "nowrap";
 		node.style.fontSize = "100px";
 		const w = node.scrollWidth || 1;
@@ -280,6 +289,34 @@
 					const a = k.a + l * (0.35 + i * 0.08) * (i % 2 ? -1 : 1);
 					set(k.b, { left: px(W / 2 + Math.cos(a) * k.rad - k.r / 2), top: px(H / 2 + Math.sin(a) * k.rad * 0.7 - k.r / 2) });
 				}
+			});
+		}
+		if (deco.spotlight) {
+			// Premium dark: one soft overhead light, a faint floor glow and a dotted grid fading
+			// out from the centre, so dark scenes have depth instead of flat black.
+			const beam = el("div", "deco", root);
+			set(beam, { background: `radial-gradient(ellipse 55% 60% at 50% -8%, ${alpha("#ffffff", 0.13)} 0%, ${alpha(plan.palette.electric, 0.08)} 38%, transparent 70%)` });
+			const floor = el("div", "deco", root);
+			set(floor, { background: `radial-gradient(ellipse 60% 35% at 50% 108%, ${alpha(plan.palette.lilac, 0.16)} 0%, transparent 70%)` });
+			const dots = el("div", "deco", root);
+			set(dots, { backgroundImage: `radial-gradient(circle, ${alpha("#ffffff", 0.09)} 1px, transparent 1.5px)`, backgroundSize: `${px(34 * S)} ${px(34 * S)}`, maskImage: "radial-gradient(ellipse 70% 60% at 50% 45%, #000 0%, transparent 75%)", webkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 45%, #000 0%, transparent 75%)" });
+			draws.push((l) => {
+				set(beam, { opacity: (0.85 + 0.15 * Math.sin(l * 1.3 + ps.index)).toFixed(3) });
+				set(dots, { backgroundPosition: `${px(l * 6 * S)} ${px(l * -4 * S)}` });
+			});
+		}
+		if (deco.aurora) {
+			// Premium light: two big soft lights in the accent colours, drifting slowly.
+			const cols = [plan.palette.electric, plan.palette.lilac];
+			const blobs = cols.map((c, i) => {
+				const b = el("div", "deco", root);
+				const r = (0.75 + hash(i * 3.1 + ps.index) * 0.3) * Math.max(W, H);
+				set(b, { inset: "auto", width: px(r), height: px(r), borderRadius: "50%", background: `radial-gradient(circle, ${alpha(c, 0.32)} 0%, ${alpha(c, 0)} 62%)` });
+				const side = (i + ps.index) % 2 ? 1 : -1;
+				return { b, r, x: W / 2 + side * W * 0.42, y: H * (i ? 0.85 : 0.1) };
+			});
+			draws.push((l) => {
+				for (const [i, k] of blobs.entries()) set(k.b, { left: px(k.x - k.r / 2 + Math.sin(l * 0.5 + i) * 60 * S), top: px(k.y - k.r / 2 + Math.cos(l * 0.4 + i) * 40 * S) });
 			});
 		}
 		if (deco.halftone) {
@@ -467,34 +504,162 @@
 	};
 
 	/** Fake app window for UI scenes without a screenshot. */
-	const mockUI = (parent, palette, accent, seed) => {
+	/** What mock screens show when the script has no "app" block: plausible, never grey bars. */
+	const UI_DEFAULT = {
+		kind: "dashboard",
+		nav: ["Home", "Inbox", "Projects", "Reports", "Settings"],
+		title: "Overview",
+		stats: [["Active this week", "2,481"], ["Completed", "184"], ["Time saved", "12h"]],
+		rows: [["Maya Chen", "Updated the launch plan"], ["Leo Park", "Shared 3 files"], ["Ava Singh", "Left a comment"], ["Noah Kim", "Joined the workspace"]],
+		status: ["Done", "In review", "New", "Live"],
+		cta: "New",
+	};
+	let curPS = null;
+	/** A believable product screen: the brand's mark and name, real nav labels, a header with search
+	 *  and a button, stat cards, a list with avatars and status pills, and a chart. Content comes
+	 *  from the script's app block (written by the AI per product), else the defaults above.
+	 *  Light or dark to match the style's paper. Sized to its parent, so it works on a phone too. */
+	const mockUI = (parent, palette, sceneAccent, seed, kindOverride) => {
+		const ui = { ...UI_DEFAULT, ...(plan.app ?? {}), ...(curPS?.scene?.ui ?? {}) };
+		// A real product keeps one brand colour on every screen, whatever the scene's accent is.
+		const accent = palette.brand ?? sceneAccent;
+		const dark = lum(palette.paper) < 0.2;
+		const T = dark
+			? { bg: "#0d0f15", side: "#0a0c11", card: "#141720", line: "rgba(255,255,255,0.07)", text: "#eef0f6", mute: "#878ea0", soft: "rgba(255,255,255,0.05)" }
+			: { bg: "#ffffff", side: "#f6f7f9", card: "#ffffff", line: "rgba(12,14,22,0.08)", text: "#0d0f14", mute: "#6b7180", soft: "rgba(12,14,22,0.035)" };
+		const brandC = palette.brand ?? accent;
+		const pw = parent.offsetWidth || W * 0.6;
+		const ph = parent.offsetHeight || H * 0.6;
+		const narrow = pw / Math.max(1, ph) < 0.8;
+		// Phone screens use phone-sized type, not a shrunken desktop.
+		const u = narrow ? pw / 400 : pw / 1150;
+		const f = (n) => px(n * u);
 		const m = el("div", "mock", parent);
-		set(m, { gridTemplateColumns: "22% 1fr", background: "#fbfaf7" });
-		const side = el("div", "", m);
-		set(side, { background: "#f0ede5", padding: px(28 * S), display: "flex", flexDirection: "column", gap: px(16 * S) });
-		for (let i = 0; i < 7; i++) {
-			const b = el("div", "", side);
-			set(b, {
-				height: px(18 * S),
-				width: `${50 + hash(i + seed) * 45}%`,
-				borderRadius: px(9 * S),
-				background: i === 2 ? accent : "rgba(0,0,0,0.09)",
+		set(m, { display: "grid", gridTemplateColumns: narrow ? "1fr" : "21% 1fr", background: T.bg, color: T.text, fontFamily: '"Geist", system-ui, sans-serif', fontSize: f(17), letterSpacing: "-0.01em", textAlign: "left", lineHeight: "1.3" });
+		const initials = (n) => n.split(/\s+/).map((x) => x[0]).join("").slice(0, 2).toUpperCase();
+		const pill = (parentEl, text, i) => {
+			const cols = ["#16a34a", "#d97706", "#2563eb", "#7c3aed"];
+			const c = cols[i % cols.length];
+			const b = el("span", "", parentEl, text);
+			set(b, { flex: "none", fontSize: f(13), fontWeight: "600", padding: `${f(4)} ${f(10)}`, borderRadius: f(99), color: c, background: alpha(c, dark ? 0.18 : 0.11) });
+			return b;
+		};
+		if (!narrow) {
+			const side = el("div", "", m);
+			set(side, { background: T.side, borderRight: `1px solid ${T.line}`, padding: `${f(22)} ${f(16)}`, display: "flex", flexDirection: "column", gap: f(4) });
+			const logo = el("div", "", side);
+			set(logo, { display: "flex", alignItems: "center", gap: f(10), fontWeight: "700", fontSize: f(18), marginBottom: f(18), padding: `0 ${f(6)}`, whiteSpace: "nowrap", overflow: "hidden" });
+			const mk = el("span", "", logo, (plan.brand?.name ?? "K").trim().charAt(0).toUpperCase());
+			set(mk, { flex: "none", width: f(28), height: f(28), borderRadius: f(8), background: brandC, color: textOn(brandC), display: "grid", placeItems: "center", fontSize: f(15), fontWeight: "800" });
+			el("span", "", logo, plan.brand?.name ?? "");
+			ui.nav.forEach((label, i) => {
+				const it = el("div", "", side);
+				set(it, { display: "flex", alignItems: "center", gap: f(10), padding: `${f(9)} ${f(10)}`, borderRadius: f(9), fontSize: f(15), fontWeight: i === 0 ? "600" : "500", color: i === 0 ? T.text : T.mute, background: i === 0 ? alpha(accent, dark ? 0.16 : 0.1) : "transparent", whiteSpace: "nowrap" });
+				const ic = el("span", "", it);
+				set(ic, { flex: "none", width: f(15), height: f(15), borderRadius: f(4), border: `${f(2)} solid ${i === 0 ? accent : T.mute}`, opacity: i === 0 ? "1" : "0.6" });
+				el("span", "", it, label);
 			});
 		}
 		const main = el("div", "", m);
-		set(main, {
-			padding: px(36 * S),
-			display: "grid",
-			gridTemplateColumns: "1fr 1fr 1fr",
-			gridTemplateRows: "auto 1fr 1fr",
-			gap: px(22 * S),
-		});
+		set(main, { padding: narrow ? `${f(26)} ${f(20)}` : `${f(24)} ${f(28)}`, display: "flex", flexDirection: "column", gap: f(18), minWidth: "0", overflow: "hidden" });
 		const head = el("div", "", main);
-		set(head, { gridColumn: "1 / 4", height: px(42 * S), width: "46%", borderRadius: px(12 * S), background: "rgba(0,0,0,0.85)" });
-		const colors = [palette.lime, palette.peach, palette.sage, palette.electric, palette.butter, palette.lilac];
-		for (let i = 0; i < 6; i++) {
-			const b = el("div", "", main);
-			set(b, { borderRadius: px(20 * S), background: colors[(i + seed) % colors.length], minHeight: px(120 * S) });
+		set(head, { display: "flex", alignItems: "center", gap: f(12) });
+		const h1 = el("div", "", head, ui.title);
+		set(h1, { fontSize: f(narrow ? 30 : 26), fontWeight: "700", letterSpacing: "-0.025em", flex: "1", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" });
+		if (!narrow) {
+			const search = el("div", "", head, "Search…");
+			set(search, { width: f(200), padding: `${f(8)} ${f(12)}`, borderRadius: f(9), border: `1px solid ${T.line}`, color: T.mute, fontSize: f(14), background: T.soft });
+		}
+		const cta = el("div", "", head, ui.cta);
+		set(cta, { padding: `${f(8)} ${f(14)}`, borderRadius: f(9), background: accent, color: textOn(accent), fontWeight: "600", fontSize: f(14), whiteSpace: "nowrap", boxShadow: `0 ${f(4)} ${f(14)} ${alpha(accent, 0.35)}` });
+		const card = (parentEl, extra = {}) => {
+			const c = el("div", "", parentEl);
+			set(c, { background: T.card, border: `1px solid ${T.line}`, borderRadius: f(14), boxShadow: dark ? "none" : `0 ${f(2)} ${f(10)} rgba(12,14,22,0.05)`, ...extra });
+			return c;
+		};
+		const kind = kindOverride ?? ui.kind ?? "dashboard";
+		if (kind === "dashboard") {
+			const stats = el("div", "", main);
+			const shown = ui.stats.slice(0, narrow ? 2 : 3);
+			set(stats, { display: "grid", gridTemplateColumns: narrow ? "1fr" : `repeat(${shown.length}, 1fr)`, gap: f(14) });
+			shown.forEach(([label, value], i) => {
+				const c = card(stats, { padding: `${f(16)} ${f(18)}` });
+				const l = el("div", "", c, label);
+				set(l, { fontSize: f(13.5), color: T.mute, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" });
+				const row = el("div", "", c);
+				set(row, { display: "flex", alignItems: "baseline", gap: f(10), marginTop: f(6) });
+				const v = el("div", "", row, value);
+				set(v, { fontSize: f(30), fontWeight: "700", letterSpacing: "-0.03em" });
+				const d = el("span", "", row, `▲ ${4 + Math.round(hash(i + seed) * 20)}%`);
+				set(d, { fontSize: f(12.5), fontWeight: "600", color: "#16a34a" });
+			});
+		}
+		const bottom = el("div", "", main);
+		set(bottom, { display: "grid", gridTemplateColumns: narrow || kind !== "dashboard" ? "1fr" : "1.45fr 1fr", gap: f(14), flex: "1", minHeight: "0" });
+		if (kind === "chat") {
+			const c = card(bottom, { padding: f(18), display: "flex", flexDirection: "column", gap: f(12) });
+			ui.rows.slice(0, 4).forEach(([name, text], i) => {
+				const me = i % 2 === 1;
+				const b = el("div", "", c, text);
+				set(b, { alignSelf: me ? "flex-end" : "flex-start", maxWidth: "72%", padding: `${f(10)} ${f(14)}`, borderRadius: f(16), fontSize: f(15), background: me ? accent : T.soft, color: me ? textOn(accent) : T.text, border: me ? "none" : `1px solid ${T.line}` });
+				if (!me) {
+					const n = el("div", "", b, name);
+					set(n, { fontSize: f(12), color: T.mute, marginTop: f(4) });
+				}
+			});
+		} else if (kind === "editor") {
+			const c = card(bottom, { padding: `${f(22)} ${f(26)}`, display: "flex", flexDirection: "column", gap: f(12) });
+			ui.rows.slice(0, 5).forEach(([name, text], i) => {
+				const ln = el("div", "", c);
+				set(ln, { fontSize: f(i === 0 ? 22 : 15.5), fontWeight: i === 0 ? "700" : "400", color: i === 0 ? T.text : T.mute, lineHeight: "1.5" });
+				if (i === 0) ln.textContent = name;
+				else {
+					el("span", "", ln, `${name} `);
+					const hl = el("span", "", ln, text);
+					set(hl, { background: i === 2 ? alpha(accent, 0.25) : "transparent", color: i === 2 ? T.text : T.mute, borderRadius: f(4), padding: `0 ${f(3)}` });
+				}
+			});
+		} else {
+			const list = card(bottom, { padding: f(6), display: "flex", flexDirection: "column", overflow: "hidden" });
+			const avCols = [palette.electric, palette.coral, palette.lime, palette.lilac, palette.peach];
+			ui.rows.slice(0, narrow ? 4 : kind === "inbox" ? 5 : 4).forEach(([name, detail], i) => {
+				const r = el("div", "", list);
+				set(r, { display: "flex", alignItems: "center", gap: f(12), padding: `${f(11)} ${f(12)}`, borderBottom: `1px solid ${T.line}`, minWidth: "0" });
+				const ac = avCols[(i + seed) % avCols.length] ?? accent;
+				const av = el("span", "", r, initials(name));
+				set(av, { flex: "none", width: f(34), height: f(34), borderRadius: "50%", background: ac, color: textOn(ac), display: "grid", placeItems: "center", fontSize: f(13), fontWeight: "700" });
+				const tx = el("div", "", r);
+				set(tx, { flex: "1", minWidth: "0" });
+				const n = el("div", "", tx, name);
+				set(n, { fontSize: f(15), fontWeight: "600", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" });
+				const d = el("div", "", tx, detail);
+				set(d, { fontSize: f(13), color: T.mute, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" });
+				pill(r, ui.status[i % ui.status.length], i);
+			});
+			if (kind === "dashboard" && !narrow) {
+				const ch = card(bottom, { padding: `${f(16)} ${f(18)}`, display: "flex", flexDirection: "column" });
+				const t = el("div", "", ch, ui.stats[0]?.[0] ?? "Activity");
+				set(t, { fontSize: f(13.5), color: T.mute });
+				const bars = el("div", "", ch);
+				set(bars, { flex: "1", display: "flex", alignItems: "flex-end", gap: f(7), marginTop: f(12), minHeight: f(90) });
+				for (let i = 0; i < 12; i++) {
+					const b = el("div", "", bars);
+					const h = 25 + 70 * (0.35 + 0.65 * hash(i * 1.7 + seed)) * (0.55 + i / 24);
+					set(b, { flex: "1", height: `${Math.min(100, h)}%`, borderRadius: f(5), background: i === 11 ? accent : alpha(accent, dark ? 0.35 : 0.22) });
+				}
+			}
+		}
+		if (narrow) {
+			// A phone's tab bar: the first four nav labels, the current one in the brand colour.
+			const tabs = el("div", "", m);
+			set(tabs, { position: "absolute", left: "0", right: "0", bottom: "0", display: "flex", justifyContent: "space-around", padding: `${f(10)} ${f(8)} ${f(18)}`, borderTop: `1px solid ${T.line}`, background: T.bg });
+			ui.nav.slice(0, 4).forEach((label, i) => {
+				const t = el("div", "", tabs);
+				set(t, { display: "flex", flexDirection: "column", alignItems: "center", gap: f(4), fontSize: f(11), fontWeight: "600", color: i === 0 ? accent : T.mute });
+				const ic = el("span", "", t);
+				set(ic, { width: f(18), height: f(18), borderRadius: f(5), border: `${f(2)} solid currentColor` });
+				el("span", "", t, label);
+			});
 		}
 		return m;
 	};
@@ -1614,7 +1779,6 @@
 		const ph = H * (vertical ? 0.5 : s.caption ? 0.66 : 0.78);
 		const pw = ph / 2.05;
 		const top = s.caption ? H * (vertical ? 0.3 : 0.27) : (H - ph) / 2;
-		const colors = [palette.lime, palette.peach, palette.electric, palette.butter, palette.sage];
 		const phones = [0, 1, 2].map((i) => {
 			const ph0 = el("div", "phone", cam);
 			set(ph0, { width: px(pw), height: px(ph), left: px(W / 2 - pw / 2), top: px(top), borderRadius: px(pw * 0.16), zIndex: i === 1 ? "3" : "2", boxShadow: `0 ${px(40 * S)} ${px(80 * S)} rgba(0,0,0,0.3)` });
@@ -1626,11 +1790,11 @@
 				const im = el("img", "fill", scr);
 				im.src = img.src;
 			} else {
-				set(scr, { background: "#fbfaf7", display: "flex", flexDirection: "column", gap: px(pw * 0.05), padding: px(pw * 0.08), paddingTop: px(pw * 0.2), boxSizing: "border-box" });
-				for (let j = 0; j < 5; j++) {
-					const b = el("div", "", scr);
-					set(b, { borderRadius: px(pw * 0.05), background: j === 0 ? "rgba(0,0,0,0.85)" : colors[(i + j) % colors.length], height: px(j === 0 ? pw * 0.1 : pw * (0.25 + hash(i * 3 + j) * 0.3)), flex: "none" });
-				}
+				// The product's own screens, phone-sized: a list, the dashboard and a chat.
+				set(scr, { overflow: "hidden", paddingTop: px(pw * 0.12), boxSizing: "border-box", background: lum(palette.paper) < 0.2 ? "#0d0f15" : "#ffffff" });
+				const inner = el("div", "", scr);
+				set(inner, { position: "relative", width: "100%", height: "100%" });
+				mockUI(inner, palette, palette.electric, i, ["inbox", "dashboard", "chat"][i]);
 			}
 			const island = el("div", "", ph0);
 			set(island, { position: "absolute", top: px(pw * 0.06), left: px(pw * 0.36), width: px(pw * 0.28), height: px(pw * 0.08), borderRadius: px(99), background: "#0b0b0d" });
@@ -1663,11 +1827,28 @@
 
 	// ---------- build ----------
 	let ready = false;
+	/** The film's own style; a scene with its own (ps.look) swaps it in while it builds and draws. */
+	let base = null;
+	let boil = null;
+	const useScene = (ps) => {
+		curPS = ps;
+		if (!base) return;
+		plan.look = ps?.look ?? base.look;
+		plan.palette = ps?.palette ?? base.palette;
+		M = ps?.M ?? base.M;
+	};
 	const build = async (nextPlan, nextOpts = {}) => {
 		ready = false;
 		plan = nextPlan;
 		const mo = plan.motion ?? {};
-		M = { snap: mo.snap ?? 1, bounce: mo.bounce ?? 1, curve: Array.isArray(mo.curve) && mo.curve.length === 4 ? bezier(mo.curve) : null };
+		// The style's own feel, scaled by the user's motion settings.
+		const feelM = (look) => {
+			const fe = look?.feel ?? {};
+			return { snap: (mo.snap ?? 1) * (fe.snap ?? 1), bounce: (mo.bounce ?? 1) * (fe.bounce ?? 1), curve: Array.isArray(mo.curve) && mo.curve.length === 4 ? bezier(mo.curve) : null, camera: fe.camera ?? "push" };
+		};
+		M = feelM(plan.look);
+		base = { look: plan.look, palette: plan.palette, M };
+		for (const ps of plan.scenes) if (ps.look) ps.M = feelM(ps.look);
 		opts = nextOpts;
 		W = plan.width;
 		H = plan.height;
@@ -1707,8 +1888,36 @@
 				if (r) images[u] = r;
 			}),
 		);
+		boil = null;
+		if ([plan.look, ...plan.scenes.map((x) => x.look)].some((l) => l?.deco?.sketch)) {
+			const f = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+			f.setAttribute("id", "boil");
+			const turb = document.createElementNS("http://www.w3.org/2000/svg", "feTurbulence");
+			turb.setAttribute("type", "fractalNoise");
+			turb.setAttribute("baseFrequency", "0.018");
+			turb.setAttribute("numOctaves", "2");
+			const disp = document.createElementNS("http://www.w3.org/2000/svg", "feDisplacementMap");
+			disp.setAttribute("in", "SourceGraphic");
+			disp.setAttribute("scale", String(Math.round(5 * S)));
+			f.append(turb, disp);
+			filters.appendChild(f);
+			boil = turb;
+		}
 		built = plan.scenes.map((ps) => {
+			useScene(ps);
 			const root = el("div", "scene", stage);
+			root.classList.add(`look-${(ps.look ?? plan.look)?.id ?? "editorial"}`);
+			const dt = ps.look?.display;
+			if (dt) {
+				// The scene's own type, through the same custom properties the stage sets.
+				root.style.setProperty("--fd", dt.family);
+				root.style.setProperty("--fw", String(dt.weight));
+				root.style.setProperty("--fb", String(Math.min(dt.weight, 820)));
+				root.style.setProperty("--fst", `${dt.stretch}%`);
+				root.style.setProperty("--ft", `${dt.tracking}em`);
+				root.style.setProperty("--flh", String(dt.lineHeight));
+				root.style.setProperty("--fcase", dt.upper ? "uppercase" : "none");
+			}
 			root.style.zIndex = String(10 + ps.index);
 			const sky = paintBg(root, ps.bg, ps.index);
 			const decoDraw = decorate(root, ps);
@@ -1733,6 +1942,7 @@
 			}
 			return { ps, root, cam, draw, sky: (l) => (sky(l), decoDraw(l)), blur, lastVisible: false };
 		});
+		useScene(null);
 		grain = null;
 		if (plan.grain) {
 			grain = el("div", "", stage);
@@ -1782,16 +1992,14 @@
 			}
 			if (!visible) continue;
 			resetRoot(b);
+			useScene(b.ps);
 			const l = t - start;
 			// Camera life: it never stops. A steady push, a punch-in on hard cuts, and a small
 			// kick on every beat so something always moves with the music.
 			const punch = b.ps.transition === "cut" && i > 0 ? 0.05 * (1 - expoOut(prog(l, 0, 0.3))) : 0;
 			const kick = 0.01 * Math.exp(-((t + 1e-6) % plan.beat) * 9);
 			const type = b.ps.scene.type;
-			if (!SELF_CAMERA.has(type)) {
-				const z = 1 + 0.055 * clamp(l / dur) + punch + kick;
-				set(b.cam, { transform: `translate(${px((W * (1 - z)) / 2)}, ${px((H * (1 - z)) / 2)}) scale(${z.toFixed(4)})` });
-			}
+			if (!SELF_CAMERA.has(type)) set(b.cam, { transform: camera(M.camera, l, dur, t, punch, kick, i) });
 			const sp = b.ps.speed ?? 1;
 			b.sky(l);
 			try {
@@ -1802,6 +2010,7 @@
 			}
 			b.blur.setAttribute("stdDeviation", "0 0");
 		}
+		useScene(null);
 		wipebar.style.visibility = "hidden";
 		if (wipebar.style.maskImage && wipebar.style.maskImage !== "none") set(wipebar, { maskImage: "none", webkitMaskImage: "none" });
 		// Transitions between neighbours.
@@ -1819,10 +2028,69 @@
 			const cur = built.find((b) => t >= b.ps.start && t < b.ps.start + b.ps.dur) ?? built[built.length - 1];
 			for (const o of overlays) o(t, cur.ps);
 		}
+		// Hand-drawn boil: a new noise seed 8 times a second, like redrawn animation frames.
+		if (boil) boil.setAttribute("seed", String(Math.floor(t * 8) % 97));
 		if (grain) {
 			const f = Math.floor(t * 24);
 			set(grain, { transform: `translate(${px((hash(f) - 0.5) * 200)}, ${px((hash(f + 0.5) - 0.5) * 200)})` });
 		}
+	};
+
+	/** Each style's camera: how the frame lives while a scene plays. l = scene time, t = film time. */
+	const camera = (kind, l, dur, t, punch, kick, i) => {
+		const u = clamp(l / dur);
+		const beatPhase = (t + 1e-6) % plan.beat;
+		const beatN = Math.floor((t + 1e-6) / plan.beat);
+		let z = 1, x = 0, y = 0, r = 0, extra = "";
+		if (kind === "punch") {
+			// Poster: every scene slams in from a tight crop, a hard kick on each beat.
+			z = 1 + 0.14 * (1 - expoOut(prog(l, 0, 0.35))) + 0.03 * Math.exp(-beatPhase * 12);
+		} else if (kind === "settle") {
+			// Keynote: starts close and slowly settles back, like a stage camera.
+			z = 1.1 - 0.1 * expoOut(prog(l, 0, Math.min(dur, 2.4)));
+			y = -H * 0.012 * (1 - u);
+		} else if (kind === "pan") {
+			// Blueprint / Swiss: a precise, linear dolly sideways, alternating direction.
+			z = 1.04;
+			x = W * 0.025 * (i % 2 ? 1 : -1) * (u - 0.5);
+		} else if (kind === "shake") {
+			// Loud: big beat kicks with a jolt in a random direction.
+			const k = Math.exp(-beatPhase * 10);
+			z = 1.02 + 0.045 * k + punch;
+			x = (hash(beatN) - 0.5) * W * 0.02 * k;
+			y = (hash(beatN + 0.37) - 0.5) * H * 0.02 * k;
+			r = (hash(beatN + 0.71) - 0.5) * 1.6 * k;
+		} else if (kind === "glitch") {
+			// Terminal: hard, stepped jumps a few times a scene, otherwise dead still.
+			const step = Math.floor(l * 6);
+			const on = hash(step + i * 13) > 0.86;
+			z = 1 + (on ? 0.03 : 0);
+			x = on ? (hash(step + 0.5) - 0.5) * W * 0.03 : 0;
+		} else if (kind === "handheld") {
+			// Riso / Halftone: a gentle wander, like a camera held by hand.
+			z = 1.035 + 0.02 * u + kick;
+			x = W * 0.008 * Math.sin(t * 1.3) + W * 0.004 * Math.sin(t * 3.1);
+			y = H * 0.008 * Math.cos(t * 1.1) + H * 0.003 * Math.sin(t * 2.7);
+			r = 0.5 * Math.sin(t * 0.9);
+		} else if (kind === "float") {
+			// Glass: the whole frame floats and tilts in 3D.
+			z = 1.03 + 0.02 * u;
+			y = H * 0.01 * Math.sin(t * 1.4);
+			extra = ` perspective(${px(2600 * S)}) rotateX(${(2.2 * Math.sin(t * 0.8)).toFixed(3)}deg) rotateY(${(3 * Math.cos(t * 0.6)).toFixed(3)}deg)`;
+		} else if (kind === "onetake") {
+			// One take: the camera keeps travelling in one direction for the whole film, so scenes
+			// read as one continuous shot. Film time drives it, not scene time.
+			z = 1.08 + 0.03 * Math.sin(t * 0.45);
+			x = -W * 0.035 * Math.sin(t * 0.32);
+			y = -H * 0.02 * Math.cos(t * 0.27);
+			r = 0.6 * Math.sin(t * 0.21);
+		} else if (kind === "still") {
+			// Minimal / Mono: no camera at all; the design does the moving.
+			z = 1;
+		} else {
+			z = 1 + 0.055 * u + punch + kick;
+		}
+		return `translate(${px((W * (1 - z)) / 2 + x)}, ${px((H * (1 - z)) / 2 + y)}) scale(${z.toFixed(4)}) rotate(${r.toFixed(3)}deg)${extra}`;
 	};
 
 	const applyTransition = (kind, a, b, p) => {

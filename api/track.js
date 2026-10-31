@@ -10,6 +10,7 @@ const MESSAGES = {
 	install: (b) => `🟢 Kinetic opened for the first time${b.v ? ` (v${b.v})` : ""}`,
 	export: (b) => `🎬 Video exported${b.aspect ? ` ${b.aspect}` : ""}${b.gif ? " + GIF" : ""}, ${b.pro ? "Pro" : b.badge ? "free, with badge" : "free, clean"}`,
 	activate: () => `🔑 Kinetic Pro activated`,
+	tryfail: (b) => `❌ Website film failed in the visitor's browser: ${b.reason || "unknown"}`,
 };
 
 export default async function handler(req, res) {
@@ -18,7 +19,7 @@ export default async function handler(req, res) {
 	let b = req.body;
 	if (typeof b === "string") { try { b = JSON.parse(b); } catch { b = {}; } }
 	b = b && typeof b === "object" ? b : {};
-	const e = clean(b.e, /^(buy|install|export|activate)$/);
+	const e = clean(b.e, /^(buy|install|export|activate|tryfail)$/);
 	if (!e || isBot(req)) return res.status(204).end();
 	const body = {
 		from: clean(b.from, /^(site|app)$/),
@@ -27,6 +28,7 @@ export default async function handler(req, res) {
 		gif: b.gif === true,
 		pro: b.pro === true,
 		badge: b.badge === true,
+		reason: typeof b.reason === "string" ? b.reason.replace(/[^\w .,:'()/-]/g, "").slice(0, 120) : "",
 	};
 	if (firstInWindow(req, e + body.aspect)) await sendTelegram(`${MESSAGES[e](body)}\n📍 ${place(req)}`);
 	res.status(204).end();
