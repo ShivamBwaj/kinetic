@@ -405,3 +405,39 @@ img.fill {
 .look-sketch .bold {
 	-webkit-text-stroke: 0.012em #1d1d1f;
 }
+
+/* Post: bloom glows display type in the scene's colours (--glow-*, set per scene). */
+.fx-bloom :is(.display, .bold) {
+	text-shadow:
+		0 0 calc(0.04em * var(--bloom, 1)) var(--glow-fg),
+		0 0 calc(0.28em * var(--bloom, 1)) var(--glow),
+		0 0 calc(0.8em * var(--bloom, 1)) var(--glow-soft);
+}
+/* Post: chromatic aberration; --ab (px) kicks on every beat. */
+.fx-ab :is(.display, .bold) {
+	text-shadow:
+		calc(var(--ab, 0) * -1px) 0 0 rgba(255, 32, 86, 0.78),
+		calc(var(--ab, 0) * 1px) 0 0 rgba(0, 224, 255, 0.78);
+}
+.fx-bloom.fx-ab :is(.display, .bold) {
+	text-shadow:
+		calc(var(--ab, 0) * -1px) 0 0 rgba(255, 32, 86, 0.78),
+		calc(var(--ab, 0) * 1px) 0 0 rgba(0, 224, 255, 0.78),
+		0 0 calc(0.28em * var(--bloom, 1)) var(--glow),
+		0 0 calc(0.8em * var(--bloom, 1)) var(--glow-soft);
+}
+.fx-ab :is(.card, .mock, .phone) {
+	filter: drop-shadow(calc(var(--ab, 0) * -1px) 0 0 rgba(255, 32, 86, 0.55)) drop-shadow(calc(var(--ab, 0) * 1px) 0 0 rgba(0, 224, 255, 0.55));
+}
+
+/* Chrome: liquid-metal type, a sky reflection band across every letter, a cold glow. */
+.fx-chrome :is(.display, .bold) :is(.glyph, .word:not(:has(.glyph, .markword))) {
+	background: linear-gradient(180deg, #ffffff 0%, #dfe7ee 30%, #8d99a6 46%, #2c323a 52%, #6f7c8a 60%, #e9f3ff 78%, #9fb2c4 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+}
+.fx-chrome :is(.display, .bold) {
+	filter: drop-shadow(0 0.015em 0 rgba(255, 255, 255, 0.35)) drop-shadow(0 0 0.18em rgba(90, 176, 255, 0.35));
+}

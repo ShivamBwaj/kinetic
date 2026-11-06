@@ -229,6 +229,358 @@
 		};
 	};
 
+	// ---------- FX layers (particles, floor, shapes, axes) ----------
+	// Every one is a pure function of time from fixed seeds, so preview, scrubbing and export agree.
+
+	/** A canvas over the scene background, drawn in stage units at reduced resolution. */
+	const canvasLayer = (root, z) => {
+		const R = 0.75;
+		const c = el("canvas", "deco", root);
+		c.width = Math.round(W * R);
+		c.height = Math.round(H * R);
+		set(c, { width: px(W), height: px(H), ...(z ? { zIndex: String(z) } : {}) });
+		const g = c.getContext("2d");
+		return { c, g, clear: () => (g.setTransform(R, 0, 0, R, 0, 0), g.clearRect(0, 0, W, H)) };
+	};
+	const frac = (x) => x - Math.floor(x);
+	const beatKick = (t, k = 8) => Math.exp(-((t + 1e-6) % plan.beat) * k);
+
+	/** Particle field: stars warping toward the lens, embers rising, dust motes, a confetti burst,
+	 *  soft bokeh, or chrome glints. Brightens on every beat. */
+	const particleField = (root, ps, kind, bgHex, burst) => {
+		const { g, clear } = canvasLayer(root);
+		const pal = plan.palette;
+		const dark = lum(bgHex) < 0.3;
+		const N = { stars: 150, embers: 70, dust: 90, confetti: 110, bokeh: 20, sparks: 46 }[kind] ?? 60;
+		const cols = {
+			stars: ["#ffffff", "#ffffff", pal.lime, pal.coral, pal.lilac],
+			embers: [pal.peach, pal.butter, pal.coral, pal.lime],
+			dust: [dark ? "#ffffff" : pal.ink],
+			confetti: [pal.coral, pal.electric, pal.butter, pal.lime, pal.lilac, pal.peach].filter((c) => c && c !== bgHex),
+			bokeh: [pal.coral, pal.electric, pal.lilac, pal.butter, "#ffffff"],
+			sparks: ["#ffffff", pal.lime, pal.electric],
+		}[kind];
+		const P = Array.from({ length: N }, (_, i) => {
+			const h = (k) => hash(i * 17.31 + k * 3.77 + ps.index * 101.3);
+			return { a: h(1), b: h(2), c: h(3), d: h(4), e: h(5), col: cols[Math.floor(h(6) * cols.length)] ?? "#fff", i };
+		});
+		return (l) => {
+			const t = ps.start + l;
+			const kick = beatKick(t);
+			clear();
+			if (kind === "stars") {
+				const R = Math.hypot(W, H) * 0.6;
+				for (const p of P) {
+					const z = frac(p.b + l * 0.09 * (0.6 + p.c));
+					const ang = p.a * Math.PI * 2;
+					const r = z * z * R + 6 * S;
+					const x = W / 2 + Math.cos(ang) * r;
+					const y = H / 2 + Math.sin(ang) * r * 0.8;
+					const tw = 0.6 + 0.4 * Math.sin(t * (2 + p.d * 5) + p.e * 9);
+					const s = (0.6 + 2.6 * z) * S * (1 + kick * 0.6);
+					g.globalAlpha = clamp(z * 2.2) * tw * (0.55 + 0.45 * kick);
+					g.fillStyle = p.col;
+					g.beginPath();
+					g.arc(x, y, s, 0, Math.PI * 2);
+					g.fill();
+					if (z > 0.55) {
+						// Streaks toward the edges as they rush past.
+						const len = (z - 0.55) * 60 * S * (1 + kick * 2);
+						g.strokeStyle = p.col;
+						g.lineWidth = s * 0.9;
+						g.beginPath();
+						g.moveTo(x, y);
+						g.lineTo(x - Math.cos(ang) * len, y - Math.sin(ang) * len * 0.8);
+						g.stroke();
+					}
+				}
+			} else if (kind === "embers") {
+				for (const p of P) {
+					const u = frac(p.b + l * (0.06 + 0.08 * p.c));
+					const x = p.a * W + Math.sin(l * (0.8 + p.d) + p.e * 6) * 50 * S;
+					const y = H * (1.08 - u * 1.25);
+					const s = (1.5 + p.c * 3.5) * S;
+					const fade = Math.sin(u * Math.PI);
+					g.fillStyle = p.col;
+					g.globalAlpha = fade * 0.18 * (1 + kick);
+					g.beginPath();
+					g.arc(x, y, s * 4, 0, Math.PI * 2);
+					g.fill();
+					g.globalAlpha = fade * 0.9;
+					g.beginPath();
+					g.arc(x, y, s, 0, Math.PI * 2);
+					g.fill();
+				}
+			} else if (kind === "dust") {
+				g.fillStyle = cols[0];
+				for (const p of P) {
+					const x = frac(p.a + l * 0.012 * (p.c - 0.5)) * W;
+					const y = frac(p.b - l * 0.01 * (0.3 + p.d)) * H;
+					g.globalAlpha = (0.12 + 0.35 * p.e) * (0.6 + 0.4 * Math.sin(t * (1 + p.c * 3) + p.d * 7));
+					g.beginPath();
+					g.arc(x, y, (0.8 + p.c * 2.2) * S, 0, Math.PI * 2);
+					g.fill();
+				}
+			} else if (kind === "confetti") {
+				// Two party cannons fire from the bottom corners (drag + gravity, closed form), then a
+				// light drift keeps falling.
+				const kD = 1.7;
+				const grav = 1.6 * H;
+				const vt = grav / kD;
+				for (const p of P) {
+					let x, y, rot, flip;
+					if (burst && p.i < N * 0.7) {
+						const dt = l - p.c * 0.18;
+						if (dt < 0) continue;
+						const side = p.i % 2 ? 1 : -1;
+						const vx = -side * (0.25 + 0.55 * p.a) * W;
+						const vy = -(1.1 + 0.9 * p.b) * H;
+						const e = (1 - Math.exp(-kD * dt)) / kD;
+						x = (side > 0 ? W * 1.02 : -W * 0.02) + vx * e;
+						y = H * 1.02 + (vy - vt) * e + vt * dt;
+						rot = p.d * 6 + dt * (3 + p.e * 8);
+						flip = Math.cos(dt * (5 + p.c * 7) + p.a * 6);
+					} else {
+						const u = frac(p.b + l * (0.07 + 0.06 * p.c));
+						x = p.a * W + Math.sin(l * 1.3 + p.d * 6) * 40 * S;
+						y = -0.05 * H + u * 1.1 * H;
+						rot = p.d * 6 + l * (1 + p.e * 2);
+						flip = Math.cos(l * (3 + p.c * 4) + p.a * 6);
+						g.globalAlpha = burst ? 0 : 0.85;
+						if (burst) continue;
+					}
+					if (y > H + 40 * S) continue;
+					g.globalAlpha = 0.95;
+					g.fillStyle = p.col;
+					g.save();
+					g.translate(x, y);
+					g.rotate(rot);
+					g.scale(1, flip);
+					if (p.e > 0.7) {
+						g.beginPath();
+						g.arc(0, 0, 6 * S, 0, Math.PI * 2);
+						g.fill();
+					} else g.fillRect(-9 * S, -5 * S, 18 * S, 10 * S);
+					g.restore();
+				}
+			} else if (kind === "bokeh") {
+				g.globalCompositeOperation = dark ? "screen" : "source-over";
+				for (const p of P) {
+					const r = (50 + p.c * 150) * S;
+					const x = (p.a * 1.2 - 0.1) * W + Math.sin(l * 0.25 + p.d * 6) * 80 * S;
+					const y = (p.b * 1.2 - 0.1) * H + Math.cos(l * 0.2 + p.e * 6) * 60 * S;
+					const gr = g.createRadialGradient(x, y, 0, x, y, r);
+					gr.addColorStop(0, alpha(p.col, 0.42));
+					gr.addColorStop(0.7, alpha(p.col, 0.22));
+					gr.addColorStop(1, alpha(p.col, 0));
+					g.globalAlpha = (0.55 + 0.45 * Math.sin(t * 0.8 + p.d * 9)) * (dark ? 0.8 : 0.65);
+					g.fillStyle = gr;
+					g.beginPath();
+					g.arc(x, y, r, 0, Math.PI * 2);
+					g.fill();
+				}
+				g.globalCompositeOperation = "source-over";
+			} else if (kind === "sparks") {
+				g.globalCompositeOperation = "lighter";
+				for (const p of P) {
+					const x = (p.a + l * 0.006 * (p.c - 0.5)) * W;
+					const y = (p.b + l * 0.004 * (p.d - 0.5)) * H;
+					const glint = Math.max(0, Math.sin(t * (0.9 + p.c * 1.6) + p.e * 12)) ** 8 + kick * 0.35 * (p.d > 0.6 ? 1 : 0);
+					if (glint < 0.02) continue;
+					const s = (10 + p.c * 26) * S * glint;
+					g.globalAlpha = clamp(glint);
+					g.strokeStyle = p.col;
+					g.lineWidth = 1.6 * S;
+					g.beginPath();
+					g.moveTo(x - s, y);
+					g.lineTo(x + s, y);
+					g.moveTo(x, y - s);
+					g.lineTo(x, y + s);
+					g.stroke();
+					g.fillStyle = "#ffffff";
+					g.beginPath();
+					g.arc(x, y, 2.2 * S * glint, 0, Math.PI * 2);
+					g.fill();
+				}
+				g.globalCompositeOperation = "source-over";
+			}
+			g.globalAlpha = 1;
+		};
+	};
+
+	/** Synthwave floor: a perspective grid rolling toward the camera, pulsing on the beat. */
+	const gridFloor = (root, ps) => {
+		const pal = plan.palette;
+		const hz = H * (H > W ? 0.66 : 0.6);
+		// Horizon glow above, a dark ground below; the grid draws over it.
+		const sky = el("div", "deco", root);
+		set(sky, { background: `linear-gradient(180deg, transparent ${((hz / H) * 100 - 22).toFixed(1)}%, ${alpha(pal.electric, 0.3)} ${((hz / H) * 100 - 3).toFixed(1)}%, ${alpha(pal.coral, 0.55)} ${((hz / H) * 100).toFixed(1)}%, ${alpha(pal.ink, 0.9)} ${((hz / H) * 100 + 0.4).toFixed(1)}%, ${alpha(pal.ink, 0.6)} 100%)` });
+		const { g, clear } = canvasLayer(root);
+		return (l) => {
+			const t = ps.start + l;
+			const kick = beatKick(t, 6);
+			clear();
+			const lines = (pass) => {
+				g.lineWidth = (pass ? 2 : 9) * S;
+				g.globalAlpha = pass ? 0.9 : 0.16 + 0.12 * kick;
+				// Horizontals: depth 1 at the bottom edge, converging on the horizon.
+				g.strokeStyle = pal.coral;
+				const scroll = frac(t * 0.9);
+				for (let j = 0; j < 22; j++) {
+					const z = 1 + j - scroll;
+					if (z <= 0.2) continue;
+					const y = hz + (H - hz) * (0.8 / z);
+					g.globalAlpha = (pass ? 0.9 : 0.2) * clamp(1.2 - z / 16);
+					g.beginPath();
+					g.moveTo(0, y);
+					g.lineTo(W, y);
+					g.stroke();
+				}
+				// Verticals fanning out from the vanishing point.
+				g.strokeStyle = pal.lime;
+				g.globalAlpha = pass ? 0.75 : 0.18;
+				const sp = W * 0.11;
+				for (let k = -14; k <= 14; k++) {
+					g.beginPath();
+					g.moveTo(W / 2 + k * sp * 0.04, hz);
+					g.lineTo(W / 2 + k * sp * 1.9, H);
+					g.stroke();
+				}
+			};
+			lines(0);
+			lines(1);
+			g.globalAlpha = 1;
+		};
+	};
+
+	/** Maths-explainer axes: a faint grid and two axes drawing themselves on, then a curve. */
+	const axesPlane = (root, ps, bgHex) => {
+		const pal = plan.palette;
+		const ink = lum(bgHex) < 0.35 ? "#ffffff" : pal.ink;
+		const ns = "http://www.w3.org/2000/svg";
+		const svg = document.createElementNS(ns, "svg");
+		svg.setAttribute("class", "deco");
+		svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+		svg.setAttribute("width", String(W));
+		svg.setAttribute("height", String(H));
+		root.appendChild(svg);
+		const ox = W * (ps.index % 2 ? 0.86 : 0.12);
+		const oy = H * 0.84;
+		const cell = 80 * S;
+		const path = (d, stroke, w, op) => {
+			const p = document.createElementNS(ns, "path");
+			p.setAttribute("d", d);
+			p.setAttribute("fill", "none");
+			p.setAttribute("stroke", stroke);
+			p.setAttribute("stroke-width", String(w));
+			p.setAttribute("stroke-linecap", "round");
+			p.setAttribute("opacity", String(op));
+			svg.appendChild(p);
+			const len = p.getTotalLength?.() || W * 2;
+			p.setAttribute("stroke-dasharray", String(len));
+			p.setAttribute("stroke-dashoffset", String(len));
+			return { p, len };
+		};
+		let grid = "";
+		for (let x = ox % cell; x < W; x += cell) grid += `M${x.toFixed(1)} 0V${H}`;
+		for (let y = oy % cell; y < H; y += cell) grid += `M0 ${y.toFixed(1)}H${W}`;
+		const gridP = document.createElementNS(ns, "path");
+		gridP.setAttribute("d", grid);
+		gridP.setAttribute("stroke", pal.electric);
+		gridP.setAttribute("stroke-width", String(1.2 * S));
+		gridP.setAttribute("opacity", "0");
+		svg.appendChild(gridP);
+		const dir = ps.index % 2 ? -1 : 1;
+		const xAxis = path(`M${ox - dir * cell} ${oy}H${dir > 0 ? W - cell * 0.5 : cell * 0.5}`, ink, 3 * S, 0.55);
+		const yAxis = path(`M${ox} ${oy + cell}V${cell * 0.8}`, ink, 3 * S, 0.55);
+		let ticks = "";
+		for (let k = 1; k * cell < W; k++) ticks += `M${ox + dir * k * cell} ${oy - 8 * S}v${16 * S}`;
+		for (let k = 1; oy - k * cell > cell; k++) ticks += `M${ox - 8 * S} ${oy - k * cell}h${16 * S}`;
+		const tickP = path(ticks, ink, 2 * S, 0.4);
+		// A logistic curve climbing from the origin, the shape of growth.
+		let curve = "";
+		const span = (dir > 0 ? W - ox : ox) - cell;
+		for (let i = 0; i <= 60; i++) {
+			const u = i / 60;
+			const y = oy - (oy - cell * 1.6) / (1 + Math.exp(-(u - 0.55) * 9));
+			curve += `${i ? "L" : "M"}${(ox + dir * u * span).toFixed(1)} ${y.toFixed(1)}`;
+		}
+		const curveP = path(curve, pal.butter, 5 * S, 0.5);
+		return (l) => {
+			const a = cubicInOut(clamp(l / 0.9));
+			gridP.setAttribute("opacity", (0.16 * clamp(l / 0.6)).toFixed(3));
+			xAxis.p.setAttribute("stroke-dashoffset", (xAxis.len * (1 - a)).toFixed(1));
+			yAxis.p.setAttribute("stroke-dashoffset", (yAxis.len * (1 - a)).toFixed(1));
+			tickP.p.setAttribute("stroke-dashoffset", (tickP.len * (1 - cubicInOut(clamp((l - 0.4) / 0.8)))).toFixed(1));
+			curveP.p.setAttribute("stroke-dashoffset", (curveP.len * (1 - cubicInOut(clamp((l - 0.7) / 2.2)))).toFixed(1));
+		};
+	};
+
+	/** Playful vector shapes popping in around the frame edges with springs, then floating. */
+	const SHAPE_SPOTS = [[0.08, 0.16], [0.9, 0.13], [0.12, 0.84], [0.88, 0.82], [0.5, 0.07], [0.04, 0.5], [0.96, 0.48], [0.62, 0.93], [0.3, 0.06], [0.35, 0.94]];
+	const popShapes = (root, ps, bgHex) => {
+		const pal = plan.palette;
+		const cols = [pal.coral, pal.electric, pal.butter, pal.lime, pal.lilac, pal.peach, pal.ink].filter((c) => c && contrastHex(c, bgHex) > 1.35);
+		const ns = "http://www.w3.org/2000/svg";
+		const svg = document.createElementNS(ns, "svg");
+		svg.setAttribute("class", "deco");
+		svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+		svg.setAttribute("width", String(W));
+		svg.setAttribute("height", String(H));
+		svg.style.overflow = "visible";
+		root.appendChild(svg);
+		const kinds = ["ring", "squiggle", "star", "pill", "dot", "plus", "tri", "half"];
+		const spots = SHAPE_SPOTS.map((s, i) => ({ s, k: hash(i * 3.3 + ps.index * 7.9) })).sort((a, b) => a.k - b.k).slice(0, 6);
+		const shapes = spots.map(({ s }, i) => {
+			const kind = kinds[Math.floor(hash(i * 5.1 + ps.index * 2.3) * kinds.length)];
+			const col = cols[(i + ps.index) % Math.max(1, cols.length)] ?? pal.ink;
+			const r = (44 + hash(i * 9.7 + ps.index) * 46) * S;
+			const gEl = document.createElementNS(ns, "g");
+			svg.appendChild(gEl);
+			const add = (tag, attrs) => {
+				const n = document.createElementNS(ns, tag);
+				for (const k in attrs) n.setAttribute(k, String(attrs[k]));
+				gEl.appendChild(n);
+				return n;
+			};
+			let dash = null;
+			if (kind === "ring") add("circle", { r: r * 0.8, fill: "none", stroke: col, "stroke-width": r * 0.28 });
+			else if (kind === "dot") add("circle", { r: r * 0.7, fill: col });
+			else if (kind === "pill") add("rect", { x: -r * 1.1, y: -r * 0.42, width: r * 2.2, height: r * 0.84, rx: r * 0.42, fill: col });
+			else if (kind === "plus") add("path", { d: `M${-r} 0H${r}M0 ${-r}V${r}`, stroke: col, "stroke-width": r * 0.38, "stroke-linecap": "round" });
+			else if (kind === "tri") add("path", { d: `M0 ${-r}L${r * 0.95} ${r * 0.7}L${-r * 0.95} ${r * 0.7}Z`, fill: col, "stroke-linejoin": "round", stroke: col, "stroke-width": r * 0.2 });
+			else if (kind === "half") add("path", { d: `M${-r} ${r * 0.3}A${r} ${r} 0 0 1 ${r} ${r * 0.3}Z`, fill: col });
+			else if (kind === "star") {
+				const pts = Array.from({ length: 10 }, (_, k) => {
+					const a = (k * Math.PI) / 5 - Math.PI / 2;
+					const rr = k % 2 ? r * 0.45 : r;
+					return `${(Math.cos(a) * rr).toFixed(1)} ${(Math.sin(a) * rr).toFixed(1)}`;
+				});
+				add("path", { d: `M${pts.join("L")}Z`, fill: col, stroke: col, "stroke-width": r * 0.12, "stroke-linejoin": "round" });
+			} else {
+				let d = `M${-r * 1.4} 0`;
+				for (let k = 0; k < 4; k++) d += `q${r * 0.35} ${k % 2 ? r * 0.7 : -r * 0.7} ${r * 0.7} 0`;
+				dash = add("path", { d, fill: "none", stroke: col, "stroke-width": r * 0.26, "stroke-linecap": "round" });
+				const len = dash.getTotalLength?.() || r * 6;
+				dash.setAttribute("stroke-dasharray", String(len));
+				dash.__len = len;
+			}
+			return { gEl, x: s[0] * W, y: s[1] * H, at: 0.1 + i * 0.08, rot0: (hash(i * 1.9 + ps.index) - 0.5) * 60, spin: (hash(i * 6.1) - 0.5) * 40, dash, ph: hash(i * 2.9) * 6 };
+		});
+		return (l) => {
+			for (const k of shapes) {
+				const sc = Math.max(0, spring(l - k.at, 2.4, 0.38));
+				const fy = Math.sin(l * 1.6 + k.ph) * 10 * S;
+				k.gEl.setAttribute("transform", `translate(${(k.x).toFixed(1)} ${(k.y + fy).toFixed(1)}) rotate(${(k.rot0 + l * k.spin + (1 - sc) * -90).toFixed(2)}) scale(${sc.toFixed(4)})`);
+				if (k.dash) k.dash.setAttribute("stroke-dashoffset", (k.dash.__len * (1 - quartOut(clamp((l - k.at) / 0.7)))).toFixed(1));
+			}
+		};
+	};
+	const contrastHex = (a, b) => {
+		const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
+		return (x + 0.05) / (y + 0.05);
+	};
+
 	/** Style decorations behind a scene's content. Returns a draw(l) for any that move. */
 	const decorate = (root, ps) => {
 		const look = plan.look ?? {};
@@ -352,10 +704,38 @@
 			set(n, { inset: "auto", left: px(-0.04 * H), bottom: px(-0.12 * H), fontFamily: '"Archivo", sans-serif', fontWeight: "900", fontSize: px(H * 0.62), lineHeight: "1", letterSpacing: "-0.06em", color: ink, fontVariationSettings: '"wdth" 90' });
 			draws.push((l) => set(n, { transform: `translateY(${px((1 - expoOut(clamp(l / 0.7))) * H * 0.25)})` }));
 		}
+		if (deco.floor) draws.push(gridFloor(root, ps));
+		if (deco.axes) draws.push(axesPlane(root, ps, bgHex));
+		if (deco.shapes) draws.push(popShapes(root, ps, bgHex));
+		if (deco.leak) {
+			// Light leaks: two warm, blown-out blobs sweeping across the frame, breathing.
+			const cols = [plan.palette.lime, plan.palette.coral];
+			const leaks = cols.map((c, i) => {
+				const b = el("div", "deco", root);
+				const r = (0.8 + hash(i * 4.3 + ps.index) * 0.5) * Math.max(W, H);
+				set(b, { inset: "auto", width: px(r), height: px(r * 0.7), borderRadius: "50%", mixBlendMode: "screen", background: `radial-gradient(ellipse, ${alpha(c, 0.55)} 0%, ${alpha(c, 0.18)} 35%, ${alpha(c, 0)} 68%)` });
+				return { b, r, y: (i ? 0.9 : 0.05) * H, dir: (ps.index + i) % 2 ? 1 : -1, ph: hash(i + ps.index * 2.7) * 6 };
+			});
+			draws.push((l) => {
+				for (const k of leaks) {
+					const x = W / 2 + k.dir * (-0.75 + ((l * 0.11 + k.ph * 0.1) % 1.5)) * W;
+					set(k.b, { left: px(x - k.r / 2), top: px(k.y - k.r * 0.35), opacity: (0.55 + 0.45 * Math.sin(l * 1.7 + k.ph)).toFixed(3) });
+				}
+			});
+		}
+		if (deco.particles) draws.push(particleField(root, ps, deco.particles, bgHex, typeLed || ps.scene.type === "endcard"));
+		const vig = look.post?.vignette;
+		if (vig) {
+			const v = el("div", "deco", root);
+			set(v, { zIndex: "799", background: `radial-gradient(ellipse 75% 70% at 50% 50%, transparent 45%, rgba(0,0,0,${(vig * (dark ? 0.85 : 0.35)).toFixed(3)}) 100%)` });
+		}
 		return (l) => {
 			for (const d of draws) d(l);
 		};
 	};
+
+	/** Cinema bar height: 2:1 scope on landscape, thin bars on square and vertical. */
+	const letterboxBar = () => (W / H > 1.3 ? (H - W / 2) / 2 : H * 0.05);
 
 	/** Overlays on every scene: figure labels and a beat counter, poster crumbs, beat ticks. */
 	let overlays = [];
@@ -390,6 +770,19 @@
 				bl.textContent = (plan.brand?.url ?? "").toUpperCase();
 				br.textContent = `00:${two(Math.floor(t))}:${two(Math.floor(t * 30) % 30)}`;
 				for (const n of [tl, tr, bl, br]) set(n, { color: alpha(ps.fg, 0.7) });
+			});
+		}
+		if (deco.letterbox) {
+			// Scope bars that slide in as the film starts.
+			const bar = letterboxBar();
+			const bars = ["top", "bottom"].map((side) => {
+				const b = el("div", "", stage);
+				set(b, { position: "absolute", left: "0", width: px(W), height: px(bar), [side]: "0", background: "#000", zIndex: "945", transformOrigin: side === "top" ? "50% 0" : "50% 100%" });
+				return b;
+			});
+			overlays.push((t) => {
+				const k = expoOut(clamp(t / 0.9)).toFixed(4);
+				for (const b of bars) set(b, { transform: `scaleY(${k})` });
 			});
 		}
 		if (deco.ticks) {
@@ -437,9 +830,54 @@
 				continue;
 			}
 			if (mode === "scramble") {
-				const ch = dt >= 0.3 || /s/.test(g.ch ?? "") ? g.ch : SCRAMBLE[Math.floor(hash(g.i * 13.1 + Math.floor(l * 24)) * SCRAMBLE.length)];
+				const ch = dt >= 0.3 || /\s/.test(g.ch ?? "") ? g.ch : SCRAMBLE[Math.floor(hash(g.i * 13.1 + Math.floor(l * 24)) * SCRAMBLE.length)];
 				if (g.ch && g.node.textContent !== ch) g.node.textContent = ch;
 				set(g.node, { opacity: clamp((dt + 0.1) / 0.05).toFixed(3) });
+				continue;
+			}
+			if (mode === "blur") {
+				// Focus pull: each letter sharpens out of a soft, slightly oversized haze.
+				const k = expoOut(clamp(dt / 0.75));
+				set(g.node, {
+					opacity: clamp(dt / 0.35).toFixed(3),
+					transform: `translateY(${((1 - k) * 0.12).toFixed(4)}em) scale(${(1 + (1 - k) * 0.14).toFixed(4)})`,
+					filter: k < 0.995 ? `blur(${((1 - k) * 0.16).toFixed(4)}em)` : "none",
+				});
+				continue;
+			}
+			if (mode === "wave") {
+				// Stagger from the centre outward with an elastic overshoot, squashing as it lands.
+				const mid = (n - 1) / 2;
+				const d0 = wordAt ? t0 : at + Math.abs(g.i - mid) * st * 1.4;
+				const e = l - d0;
+				const s = spring(e, 2.6, 0.32);
+				const squash = 1 + (s - 1) * 0.6;
+				set(g.node, {
+					opacity: clamp(e / 0.05).toFixed(3),
+					transform: `translateY(${((1 - s) * 1.15).toFixed(4)}em) scale(${(2 - squash).toFixed(4)}, ${squash.toFixed(4)})`,
+				});
+				continue;
+			}
+			if (mode === "flip") {
+				// Each letter flips up out of the floor on its own hinge.
+				const s = spring(dt, 2.9, 0.48);
+				set(g.node, {
+					opacity: clamp(dt / 0.08).toFixed(3),
+					transformOrigin: "50% 100%",
+					transform: `perspective(6em) rotateX(${((1 - s) * -95).toFixed(3)}deg)`,
+				});
+				continue;
+			}
+			if (mode === "draw") {
+				// Written on: the outline traces left to right, then the fill floods in.
+				const w = quartOut(clamp(dt / 0.55));
+				const fill = clamp((dt - 0.4) / 0.35);
+				set(g.node, {
+					opacity: dt > 0 ? "1" : "0",
+					clipPath: w < 1 ? `inset(-0.2em ${((1 - w) * 100).toFixed(2)}% -0.2em -0.1em)` : "none",
+					webkitTextStroke: fill < 1 ? `${(0.018 * (1 - fill)).toFixed(4)}em currentColor` : "0",
+					webkitTextFillColor: fill < 1 ? `color-mix(in srgb, currentColor ${(fill * 100).toFixed(1)}%, transparent)` : "",
+				});
 				continue;
 			}
 			const s = spring(l - t0, 3.2, 0.52);
@@ -1855,7 +2293,7 @@
 		S = Math.min(W, H) / 1080;
 		stage.innerHTML = "";
 		filters.innerHTML = "";
-		set(stage, { width: px(W), height: px(H) });
+		set(stage, { width: px(W), height: px(H), filter: plan.look?.post?.grade ?? "none" });
 		stage.__s = {};
 		stage.style.width = px(W);
 		stage.style.height = px(H);
@@ -1919,9 +2357,26 @@
 				root.style.setProperty("--fcase", dt.upper ? "uppercase" : "none");
 			}
 			root.style.zIndex = String(10 + ps.index);
+			// Post: bloom glows the type in the scene's own colours; aberration splits it into RGB.
+			const post = plan.look?.post ?? {};
+			if (post.bloom) {
+				root.classList.add("fx-bloom");
+				root.style.setProperty("--bloom", String(post.bloom));
+				root.style.setProperty("--glow-fg", alpha(ps.fg, 0.55));
+				root.style.setProperty("--glow", alpha(ps.accent, 0.6));
+				root.style.setProperty("--glow-soft", alpha(ps.accent, 0.28));
+			}
+			if (post.aberration) root.classList.add("fx-ab");
+			if (plan.look?.deco?.chrome) root.classList.add("fx-chrome");
 			const sky = paintBg(root, ps.bg, ps.index);
 			const decoDraw = decorate(root, ps);
 			const cam = el("div", "cam", root);
+			if (base.look?.deco?.letterbox) {
+				// Keep everything inside the scope: the camera's frame shrinks to the area between the
+				// bars (the individual scale/translate properties compose with any camera transform).
+				const k = 1 - (2 * letterboxBar()) / H;
+				set(cam, { scale: k.toFixed(4), translate: `${px((W * (1 - k)) / 2)} ${px((H * (1 - k)) / 2)}` });
+			}
 			const f = document.createElementNS("http://www.w3.org/2000/svg", "filter");
 			f.setAttribute("id", `mb${ps.index}`);
 			f.setAttribute("x", "-20%");
@@ -1940,7 +2395,7 @@
 			} catch (err) {
 				console.error("scene build failed", ps.scene.type, err);
 			}
-			return { ps, root, cam, draw, sky: (l) => (sky(l), decoDraw(l)), blur, lastVisible: false };
+			return { ps, root, cam, draw, sky: (l) => (sky(l), decoDraw(l)), blur, lastVisible: false, ab: post.aberration ?? 0 };
 		});
 		useScene(null);
 		grain = null;
@@ -2000,6 +2455,8 @@
 			const kick = 0.01 * Math.exp(-((t + 1e-6) % plan.beat) * 9);
 			const type = b.ps.scene.type;
 			if (!SELF_CAMERA.has(type)) set(b.cam, { transform: camera(M.camera, l, dur, t, punch, kick, i) });
+			// Chromatic aberration rests a little split and jumps on every beat.
+			if (b.ab) b.root.style.setProperty("--ab", (b.ab * S * (1.5 + 7 * Math.exp(-((t + 1e-6) % plan.beat) * 10))).toFixed(2));
 			const sp = b.ps.speed ?? 1;
 			b.sky(l);
 			try {
@@ -2013,6 +2470,8 @@
 		useScene(null);
 		wipebar.style.visibility = "hidden";
 		if (wipebar.style.maskImage && wipebar.style.maskImage !== "none") set(wipebar, { maskImage: "none", webkitMaskImage: "none" });
+		set(wipebar, { opacity: "1" });
+		set(stage, { background: "" });
 		// Transitions between neighbours.
 		for (let i = 1; i < n; i++) {
 			const b = built[i];
@@ -2084,6 +2543,17 @@
 			x = -W * 0.035 * Math.sin(t * 0.32);
 			y = -H * 0.02 * Math.cos(t * 0.27);
 			r = 0.6 * Math.sin(t * 0.21);
+		} else if (kind === "orbit") {
+			// Neon / Chrome: a 3D orbit around the subject, sweeping side to side, kicking in on the beat.
+			const sw = cubicInOut(u) * 2 - 1;
+			z = 0.97 + 0.02 * Math.exp(-beatPhase * 9) + punch;
+			y = H * 0.006 * Math.sin(t * 1.1);
+			extra = ` perspective(${px(3000 * S)}) rotateY(${(sw * 3.2 * (i % 2 ? -1 : 1)).toFixed(3)}deg) rotateX(${(1.4 * Math.sin(t * 0.7)).toFixed(3)}deg)`;
+		} else if (kind === "dolly") {
+			// Cinematic: a slow, steady dolly in with a faint drift, like a camera on rails.
+			z = 1.02 + 0.075 * cubicInOut(u);
+			x = W * 0.006 * Math.sin(t * 0.35 + i);
+			y = H * 0.008 * (0.5 - u);
 		} else if (kind === "still") {
 			// Minimal / Mono: no camera at all; the design does the moving.
 			z = 1;
@@ -2182,6 +2652,88 @@
 				const lead = `radial-gradient(circle at center, transparent ${r0}%, #000 ${r0}%, #000 ${r1}%, transparent ${(+r1 + 1).toFixed(2)}%)`;
 				set(wipebar, { background: b.ps.accent, clipPath: "none", maskImage: lead, webkitMaskImage: lead, maskSize: size, webkitMaskSize: size, maskPosition: "center", webkitMaskPosition: "center" });
 			}
+		} else if (kind === "glitch") {
+			// Signal breakup: the next scene arrives in torn horizontal bands that jitter sideways,
+			// the old one hue-shifts, RGB split spikes, accent bars flicker.
+			const st = Math.floor(p * 14);
+			const bands = 11;
+			const rects = [];
+			for (let j = 0; j < bands; j++) {
+				const y0 = (j / bands) * H + (hash(j * 3.1 + st) - 0.5) * H * 0.04;
+				const y1 = ((j + 1) / bands) * H + (hash(j * 5.7 + st) - 0.5) * H * 0.04;
+				if (p > 0.82 || hash(j * 7.13 + st * 3.31) < p * 1.25) rects.push([Math.max(0, y0), Math.min(H, y1)]);
+			}
+			set(b.root, {
+				clipPath: p > 0.88 ? "none" : rects.length ? `polygon(${rects.map(([y0, y1]) => `0 ${px(y0)}, ${px(W)} ${px(y0)}, ${px(W)} ${px(y1)}, 0 ${px(y1)}, 0 ${px(y0)}`).join(", ")})` : "polygon(0 0, 0 0, 0 0)",
+				transform: `translateX(${px((hash(st * 1.7) - 0.5) * W * 0.07 * (1 - p))})`,
+			});
+			// No CSS filters here: a filter over a 3D camera (orbit, float) blanks the scene in Chromium.
+			set(a.root, { transform: `translateX(${px((hash(st * 2.3 + 0.4) - 0.5) * W * 0.05)})` });
+			set(stage, { background: plan.palette.ink });
+			const ab = (18 * Math.sin(p * Math.PI) + 2) * S;
+			a.root.style.setProperty("--ab", ab.toFixed(2));
+			b.root.style.setProperty("--ab", ab.toFixed(2));
+			if (p < 0.9) {
+				wipebar.style.visibility = "visible";
+				const bars = [0, 1, 2].map((k) => {
+					const y = hash(st * 4.7 + k * 1.3) * H;
+					const h = (4 + hash(st + k * 9.1) * 22) * S;
+					return `0 ${px(y)}, ${px(W)} ${px(y)}, ${px(W)} ${px(y + h)}, 0 ${px(y + h)}, 0 ${px(y)}`;
+				});
+				set(wipebar, { background: b.ps.accent, clipPath: `polygon(${bars.join(", ")})` });
+			}
+		} else if (kind === "shutter") {
+			// Slats open one after another from their centres; an accent edge leads each one.
+			const n = H > W ? 6 : 8;
+			const vertical = W >= H;
+			const len = vertical ? W : H;
+			const sw = len / n;
+			const lag = 0.05;
+			const slats = (lead) =>
+				Array.from({ length: n }, (_, j) => {
+					const k = expoInOut(clamp((p + lead - j * lag) / (1 - (n - 1) * lag)));
+					const w = k * sw;
+					const a0 = j * sw + (sw - w) / 2;
+					const a1 = a0 + w;
+					return vertical
+						? `${px(a0)} 0, ${px(a1)} 0, ${px(a1)} ${px(H)}, ${px(a0)} ${px(H)}, ${px(a0)} 0`
+						: `0 ${px(a0)}, 0 ${px(a1)}, ${px(W)} ${px(a1)}, ${px(W)} ${px(a0)}, 0 ${px(a0)}`;
+				});
+			set(b.root, { clipPath: p >= 1 ? "none" : `polygon(${slats(0).join(", ")})` });
+			set(a.root, { transform: `scale(${(1 + 0.05 * cubicInOut(p)).toFixed(4)})` });
+			if (p < 0.97) {
+				wipebar.style.visibility = "visible";
+				set(wipebar, { background: b.ps.accent, clipPath: `polygon(evenodd, ${slats(0.07).join(", ")}, ${slats(0).join(", ")})` });
+			}
+		} else if (kind === "flip") {
+			// A card flip in 3D: the old scene turns away on its vertical axis, the new one turns in.
+			const e = cubicInOut(p);
+			const ang = e * 180;
+			const dip = 1 - 0.14 * Math.sin(p * Math.PI);
+			const persp = `perspective(${px(2400 * S)})`;
+			set(stage, { background: plan.palette.ink });
+			if (ang < 90) {
+				set(a.root, { transform: `${persp} rotateY(${(-ang).toFixed(3)}deg) scale(${dip.toFixed(4)})` });
+				set(b.root, { opacity: "0" });
+			} else {
+				set(b.root, { transform: `${persp} rotateY(${(180 - ang).toFixed(3)}deg) scale(${dip.toFixed(4)})` });
+				set(a.root, { opacity: "0" });
+			}
+		} else if (kind === "flash") {
+			// Lens flash: the old scene pushes in and blows out to white, the new one comes back out of it.
+			const up = expoIn(clamp(p / 0.5));
+			const down = expoOut(clamp((p - 0.5) / 0.5));
+			// The blow-out is a white overlay, not a brightness filter (filters blank 3D cameras).
+			set(a.root, { transform: `scale(${(1 + 0.07 * up).toFixed(4)})` });
+			if (p < 0.5) set(b.root, { opacity: "0" });
+			else set(b.root, { transform: `scale(${(1.07 - 0.07 * down).toFixed(4)})` });
+			const fc = a.focus ?? { x: W / 2, y: H / 2 };
+			wipebar.style.visibility = "visible";
+			set(wipebar, {
+				clipPath: "none",
+				opacity: (p < 0.5 ? up : 1 - down).toFixed(3),
+				background: `radial-gradient(ellipse 90% 80% at ${px(fc.x)} ${px(fc.y)}, #ffffff 0%, #fffaf0 45%, ${mixHex("#fff4e0", b.ps.accent, 0.35)} 100%)`,
+			});
 		} else if (kind === "wipe") {
 			const e = cubicInOut(p);
 			const k = H * 0.35;
