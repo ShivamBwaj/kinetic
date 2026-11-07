@@ -1,6 +1,8 @@
-// Dodo Payments webhook: counts founding sales for the price ladder and tells the owner about
-// every Kinetic sale on Telegram. Standard Webhooks signature (HMAC-SHA256 over id.timestamp.body).
+// Dodo Payments webhook: counts founding sales for the price ladder, tells the owner about every
+// Kinetic sale on Telegram, and turns on Kinetic Web Pro for the buyer's email (a refund turns it
+// off). Standard Webhooks signature (HMAC-SHA256 over id.timestamp.body).
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { PRO_PRODUCTS, proEmailKey } from "./_auth.js";
 import { FOUNDING, foundingSold, redis } from "./_kv.js";
 import { sendTelegram } from "./_tg.js";
 
@@ -45,6 +47,12 @@ export async function POST(request) {
 		if (event.type === "payment.succeeded" && pay) {
 			const founding = cart.some((i) => i?.product_id === FOUNDING.product);
 			if (founding) await redis("SADD", FOUNDING.key, pay);
+			// Kinetic Web: the account signed in with this email is Pro.
+			const email = String(d.customer?.email ?? "").trim().toLowerCase();
+			if (email && cart.some((i) => PRO_PRODUCTS.includes(i?.product_id))) {
+				await redis("SET", proEmailKey(email), pay);
+				await redis("SET", `kinetic:pay-email:${pay}`, email);
+			}
 			// Telegram once per payment, whatever Dodo retries.
 			if ((await redis("SET", `kinetic:paid:${pay}`, "1", "NX", "EX", 30 * 86400)) === "OK") {
 				const items = cart.map((i) => NAMES[i?.product_id] ?? i?.product_id).join(", ") || "a product";
@@ -54,6 +62,8 @@ export async function POST(request) {
 			}
 		} else if (event.type === "refund.succeeded" && pay) {
 			await redis("SREM", FOUNDING.key, pay);
+			const email = await redis("GET", `kinetic:pay-email:${pay}`);
+			if (email && (await redis("GET", proEmailKey(email))) === pay) await redis("DEL", proEmailKey(email));
 			await sendTelegram(`↩️ Refund on payment ${pay}`);
 		}
 	} catch (e) {

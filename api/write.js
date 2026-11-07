@@ -6,6 +6,8 @@
 // gets 100 writes a month. X-Kinetic-Kind says what the call is: "write", "repair" (the app's
 // one automatic retry after a write, free within 5 minutes) or "scene". A failed model call
 // gives the credit back. A daily per-network cap stops reinstall farming.
+import { cookieValue, loadUser, planOf, readSessionToken } from "./_auth.js";
+import { redis } from "./_kv.js";
 import { firstInWindow, place, sendTelegram } from "./_tg.js";
 
 const MODELS = ["deepseek/deepseek-v4.1-flash", "deepseek/deepseek-v4-flash"];
@@ -23,14 +25,6 @@ const WEB_MAX_TOKENS = 3000;
 const FREE_BUDGET_USD = 2;
 const MAX_CHARS = 90_000;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-async function redis(...args) {
-	const url = process.env.KV_REST_API_URL, token = process.env.KV_REST_API_TOKEN;
-	if (!url || !token) throw new Error("store not configured");
-	const r = await fetch(url, { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify(args.map(String)), signal: AbortSignal.timeout(5000) });
-	if (!r.ok) throw new Error(`store ${r.status}`);
-	return (await r.json()).result;
-}
 
 /** Pro if Dodo says the key is valid; cached for a day either way so Dodo isn't hit per call. */
 async function isPro(key) {
@@ -74,6 +68,14 @@ export default async function handler(req, res) {
 		const ip = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "?";
 		const day = new Date().toISOString().slice(0, 10);
 		pro = await isPro(String(req.headers["x-kinetic-license"] || ""));
+		// Kinetic Web: a signed-in Pro account (bought with this email, or a linked key) is Pro too.
+		if (!pro) {
+			const s = readSessionToken(cookieValue({ headers: { get: () => String(req.headers.cookie || "") } }));
+			if (s) {
+				const user = await loadUser(s.sub);
+				pro = Boolean(user && user.installId === install && (await planOf(user)).pro);
+			}
+		}
 		if (kind === "repair") {
 			// One free retry right after a charged write.
 			if ((await redis("GETDEL", `kinetic:rep:${install}`)) !== "ready") return deny(res, 402, "No retry available.", { code: "no_credits" });
