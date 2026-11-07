@@ -2415,6 +2415,19 @@
 			el("span", "", wm, "Made with Kinetic · kinetic.launchloop.tech");
 			set(wm, { right: px(24 * S), bottom: px(22 * S), fontSize: px(22 * S), padding: `${px(9 * S)} ${px(16 * S)} ${px(9 * S)} ${px(9 * S)}`, gap: px(10 * S), borderRadius: px(999) });
 			set(mk, { width: px(30 * S), height: px(30 * S), borderRadius: px(8 * S), fontSize: px(18 * S) });
+			if (opts.watermark === "strong") {
+				// Web preview without Pro: a diagonal tiled mark across the whole frame, so a screen
+				// recording of the preview can't be cropped clean.
+				const tile = el("div", "", stage);
+				tile.id = "watermark-tile";
+				const rows = Math.ceil(Math.hypot(W, H) / (180 * S)) + 1;
+				for (let r = 0; r < rows; r++) {
+					const row = el("div", "", tile, Array(6).fill("Kinetic preview · kinetic.launchloop.tech").join("   ·   "));
+					set(row, { fontSize: px(40 * S), height: px(180 * S), lineHeight: px(180 * S), marginLeft: px(-((r % 2) * 420 * S)) });
+				}
+				const side = Math.hypot(W, H);
+				set(tile, { width: px(side), height: px(side), left: px((W - side) / 2), top: px((H - side) / 2) });
+			}
 		}
 		ready = true;
 		draw(0);
@@ -2759,6 +2772,13 @@
 		// Two frames: the first commits the new styles, the second guarantees they were presented
 		// before the host captures (one frame was not enough under load).
 		return new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(true))));
+	};
+	/** Synchronous variant for hosts that snapshot the DOM themselves (the web exporter): styles
+	 *  are applied when this returns, with no paint to wait for, so it also runs in background tabs. */
+	window.drawFrame = (t) => {
+		driven = true;
+		last = t;
+		draw(t);
 	};
 
 	// ---------- preview host protocol ----------

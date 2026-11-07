@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Kinetic: free launch video maker for Windows, from a prompt</title>
-		<meta name="description" content="Kinetic turns a prompt and your screenshots into a motion-graphics launch video: kinetic type, real-looking product screens in your brand colour, cut on the beat. 40 templates, 24 styles. Free for Windows." />
+		<title>Kinetic: free launch video maker in your browser, from a prompt</title>
+		<meta name="description" content="Kinetic turns a prompt and your screenshots into a motion-graphics launch video: kinetic type, real-looking product screens in your brand colour, cut on the beat. 40 templates, 24 styles. Free in your browser, nothing to install." />
 		<link rel="canonical" href="https://kinetic.launchloop.tech/" />
 		<meta name="theme-color" content="#2433ff" />
 		<meta name="color-scheme" content="light" />
@@ -13,14 +13,14 @@
 		<meta property="og:site_name" content="Kinetic" />
 		<meta property="og:url" content="https://kinetic.launchloop.tech/" />
 		<meta property="og:title" content="Kinetic: launch videos that move" />
-		<meta property="og:description" content="Prompt to motion launch video, rendered on your PC. Edit any word, colour or beat. Free for Windows." />
+		<meta property="og:description" content="Prompt to motion launch video, right in your browser. Edit any word, colour or beat. Free to start." />
 		<meta property="og:image" content="https://kinetic.launchloop.tech/media/og-v2.jpg" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta property="og:image:alt" content="Kinetic: type one sentence, get a launch video. The app beside four films Kinetic AI wrote from one sentence each." />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content="Kinetic: launch videos that move" />
-		<meta name="twitter:description" content="Prompt to motion launch video, rendered on your PC. Free for Windows." />
+		<meta name="twitter:description" content="Prompt to motion launch video, right in your browser. Free to start." />
 		<meta name="twitter:image" content="https://kinetic.launchloop.tech/media/og-v2.jpg" />
 		<link rel="icon" href="media/icon.svg" type="image/svg+xml" />
 		<link rel="preload" href="engine/fonts/Archivo-Variable.woff2" as="font" type="font/woff2" crossorigin />
@@ -32,7 +32,7 @@
 				"name": "Kinetic",
 				"applicationCategory": "MultimediaApplication",
 				"applicationSubCategory": "Video editor",
-				"operatingSystem": "Windows 10, Windows 11",
+				"operatingSystem": "Web browser, Windows 10, Windows 11",
 				"softwareVersion": "0.5.0",
 				"description": "Desktop app that turns a prompt, a URL and screenshots into a motion-graphics launch video you can edit word by word and render locally to MP4 or GIF.",
 				"url": "https://kinetic.launchloop.tech/",
@@ -49,7 +49,7 @@
 				"mainEntity": [
 					{ "@type": "Question", "name": "Is Kinetic free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every template, style and export format is free, and you get 3 clean exports a month with no badge. After that, exports carry a small Made with Kinetic badge until the next month. Kinetic Pro gives unlimited clean exports for a one-time payment: $9 for the first 100 buyers, then $19." } },
 					{ "@type": "Question", "name": "Does Kinetic need an internet connection?", "acceptedAnswer": { "@type": "Answer", "text": "No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or have the AI write your film." } },
-					{ "@type": "Question", "name": "Is there a Mac version?", "acceptedAnswer": { "@type": "Answer", "text": "Not yet. Kinetic runs on Windows 10 and 11 (64-bit)." } },
+					{ "@type": "Question", "name": "Does it work on a Mac?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Kinetic runs in your browser on Mac, Windows, Linux and ChromeOS: sign in with Google at kinetic.launchloop.tech/app. There is also a desktop app for Windows 10 and 11." } },
 					{ "@type": "Question", "name": "Why does Windows warn me when I install it?", "acceptedAnswer": { "@type": "Answer", "text": "The installer is not code-signed yet, so SmartScreen shows a warning. Click More info, then Run anyway. Each release lists the installer's SHA-256 so you can check the file." } },
 					{ "@type": "Question", "name": "Can I use the videos commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The videos you export are yours, and the built-in music is synthesised in the app, so it is licence-free." } }
 				]
@@ -127,8 +127,7 @@
 			.try-done p { margin: 0 0 12px; font-weight: 600; }
 			.try-done.err { background: rgba(255, 90, 90, 0.18); outline: 2px solid rgba(255, 140, 140, 0.6); }
 			.try-done .btn { padding: 12px 18px; font-size: 16px; }
-			.send-link { margin: 12px 0 0; background: none; border: 0; padding: 0; color: var(--lime); font: 600 15px/1.4 var(--body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; }
-			.send-link[hidden] { display: none; }
+			.try-done .try-next { font-weight: 500; color: rgba(255, 255, 255, 0.86); font-size: 15px; line-height: 1.45; }
 			@media (max-width: 920px) { .hero-grid { grid-template-columns: 1fr; } .try { flex-direction: column; } .try-go { width: 100%; } }
 			@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
 
@@ -288,7 +287,7 @@
 					<a class="nl" href="#styles">Styles</a>
 					<a class="nl" href="#pricing">Pricing</a>
 					<a class="nl" href="#faq">FAQ</a>
-					<a class="btn dl" href="/download">Download</a>
+					<a class="btn dl" href="/app">Open Kinetic</a>
 				</nav>
 			</div>
 		</header>
@@ -311,7 +310,7 @@
 						<button type="button" class="ex" data-ex="Shipyard gives every pull request its own live preview URL in 30 seconds, with a seeded database.">a dev tool</button>
 						<button type="button" class="ex" data-ex="Bloom, an AI journaling app that turns a 1-minute voice note into a calm weekly reflection.">a journaling app</button>
 					</div>
-					<p class="fine" id="try-note" aria-live="polite">Like it? <a href="/download">Download for Windows</a> to edit every word and export the MP4. Free, 3 clean exports a month.</p>
+					<p class="fine" id="try-note" aria-live="polite">Like it? <a href="/app">Sign in with Google</a> to edit every word and export the MP4, right in your browser. Free to start, nothing to install.</p>
 					</div>
 
 					<div class="stage">
@@ -325,11 +324,11 @@
 						<div class="try-busy" id="try-busy" hidden><span class="spin" aria-hidden="true"></span><span id="try-busy-text">Writing your film…</span></div>
 						<div class="try-done" id="try-done" hidden>
 							<p id="try-done-text">Your film, written in seconds by Kinetic AI.</p>
+							<p class="try-next">Want to change the words, add your screenshots or export the MP4? Sign in with Google and this film opens in the editor, in your browser. Free, nothing to install.</p>
 							<div class="cta">
-								<a class="btn dl" href="/download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>Download free to edit and export it</a>
+								<a class="btn dl" href="/app?from=try" id="try-edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0l-5-5m5 5l-5 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>Edit this film in your browser</a>
 								<a class="btn ghost" href="/buy">Get Pro for $9</a>
 							</div>
-							<button type="button" class="send-link" id="try-send" hidden>On your phone or a Mac? Send the download link to your Windows PC</button>
 						</div>
 					</div>
 					</div>
@@ -656,7 +655,8 @@
 								<li>3 free AI-written films, then the built-in writer or your own key</li>
 								<li>After that, a small “Made with Kinetic” badge until next month</li>
 							</ul>
-							<a class="btn ghost-dark" href="/download">Download for Windows</a>
+							<a class="btn ghost-dark" href="/app">Start free in your browser</a>
+							<p class="fine">Or <a href="/download">download the Windows app</a>.</p>
 						</div>
 						<div class="plan pro" id="pro">
 							<h3>Pro <span class="tag" data-f-tag>Founding 100</span></h3>
@@ -687,7 +687,7 @@
 					<details><summary>Is Kinetic free?</summary><p>Yes. Every template, style and export format is free, with no account, and your first 3 exports each month are clean. After that, exports carry a small “Made with Kinetic” badge in the corner until the next month. Kinetic Pro gives unlimited clean exports for a one-time payment: $9 for the first 100 buyers, then $19.</p></details>
 					<details><summary>How does Pro work?</summary><p>Buy once and you get a licence key on the next page and by email. Click Activate in Kinetic on that page, or paste the key under Get Pro in the app. One key works on 3 PCs and never expires. Refunds and revocations are handled by Dodo Payments, our payment provider.</p></details>
 					<details><summary>Does it need an internet connection?</summary><p>No. The built-in writer, the editor and rendering all work offline. The internet is only used if you pull a brand from a URL or have the AI write your film.</p></details>
-					<details><summary>Is there a Mac version?</summary><p>Not yet. Kinetic runs on Windows 10 and 11 (64-bit).</p></details>
+					<details><summary>Does it work on a Mac?</summary><p>Yes. Kinetic runs in your browser on Mac, Windows, Linux and ChromeOS: <a href="/app">sign in with Google</a> and start. There is also a desktop app for Windows 10 and 11.</p></details>
 					<details><summary>Why does Windows warn me when I install it?</summary><p>The installer is not code-signed yet, so SmartScreen shows a warning. Click <b>More info</b>, then <b>Run anyway</b>. You can check the download against its SHA-256: <code>4ac4964b67e13c930039ed9c0278411e057af22d6bf0255bb5b9bc4202ce673d</code></p></details>
 					<details><summary>Can I use the videos commercially?</summary><p>Yes. The videos you export are yours, and the built-in music is synthesised in the app, so it is licence-free.</p></details>
 					<details><summary>Do my screenshots or prompts get uploaded?</summary><p>Your screenshots and videos never leave your PC; films render locally. When the AI writes a film, your one-sentence description goes to Kinetic AI (and on to the model provider) to write the script, and descriptions typed on this website are logged so we can see what people try. With your own AI key, it goes to that provider instead. With the built-in offline writer, nothing leaves your PC at all.</p></details>
@@ -698,8 +698,8 @@
 				<div class="wrap">
 					<h2>Make your launch video this afternoon.</h2>
 					<div class="cta">
-						<a class="btn dl" href="/download">Download for Windows</a>
-						<a class="btn ghost" href="https://github.com/ShivamBwaj/kinetic/releases">All releases</a>
+						<a class="btn dl" href="/app">Start free in your browser</a>
+						<a class="btn ghost" href="/download">Windows app</a>
 					</div>
 				</div>
 			</div>
@@ -890,6 +890,7 @@
 						if (!b || !mine || !window.KineticTry) return;
 						e.stopImmediatePropagation();
 						for (const x of looks.children) x.classList.toggle("on", x === b), x.setAttribute("aria-pressed", x === b);
+						mineStyle = b.dataset.style;
 						plans.mine = window.KineticTry.restyle(mine.script, b.dataset.style);
 						load("mine");
 						doneText.textContent = `Your film for ${mine.name}, now in the ${b.textContent.trim()} style.`;
@@ -897,25 +898,20 @@
 					},
 					true,
 				);
-				// Phones and Macs can't install the Windows app: let them send the link to their PC.
-				const isWinDesktop = /Windows NT/.test(navigator.userAgent) && !/Mobile|Android/.test(navigator.userAgent);
-				const sendBtn = document.getElementById("try-send");
-				if (!isWinDesktop && sendBtn) {
-					sendBtn.hidden = false;
-					sendBtn.addEventListener("click", async () => {
-						const url = "https://kinetic.launchloop.tech/download";
-						window.va?.("event", { name: "send_link" });
-						try {
-							if (navigator.share) return await navigator.share({ title: "Kinetic for Windows", text: "Download Kinetic on my PC: launch videos from one sentence", url });
-							await navigator.clipboard.writeText(url);
-							sendBtn.textContent = "Link copied. Open it on your Windows PC";
-						} catch {}
-					});
-				}
+				// "Edit this film": hand the visitor's film (in the look they picked) to the web editor,
+				// same origin, so it opens there after Google sign-in. /app takes it once.
+				let mineStyle = null;
+				document.getElementById("try-edit").addEventListener("click", () => {
+					window.va?.("event", { name: "try_edit" });
+					if (!mine || !window.KineticTry) return;
+					try {
+						localStorage.setItem("kinetic.handoff", JSON.stringify({ script: window.KineticTry.styledScript(mine.script, mineStyle), prompt: input.value.trim(), at: Date.now() }));
+					} catch {}
+				});
 				const loadLib = () =>
 					(lib ??= new Promise((ok, bad) => {
 						const s = document.createElement("script");
-						s.src = "engine/try.js?v=mw52qb3p";
+						s.src = "engine/try.js?v=mw68wkhm";
 						s.onload = () => ok(window.KineticTry);
 						s.onerror = () => bad(new Error("Couldn't load the writer. Check your connection and try again."));
 						document.head.appendChild(s);
@@ -935,7 +931,7 @@
 				const steps = ["Reading your sentence…", "Writing the scenes…", "Designing your product's screens…", "Picking a style and music…"];
 				form.addEventListener("submit", async (e) => {
 					e.preventDefault();
-					if (outOfFilms) return void (location.href = "/download");
+					if (outOfFilms) return void (mine ? document.getElementById("try-edit").click() : (location.href = "/app"));
 					const text = input.value.trim();
 					if (text.length < 8) {
 						note.textContent = "Write a sentence about your product first, like the examples.";
@@ -955,15 +951,16 @@
 						const r = await K.writeFilm(text);
 						plans.mine = r.plan;
 						mine = r;
+						mineStyle = null;
 						if (!frame) start();
 						const show = () => (plans ? load("mine") : setTimeout(show, 200));
 						show();
 						for (const x of looks.children) x.classList.remove("on"), x.setAttribute("aria-pressed", "false");
 						doneText.textContent = `Your film for ${r.name}, in the ${r.recipe} style, written in seconds by Kinetic AI.`;
 						done.hidden = false;
-						go.textContent = r.left === 0 ? "Download to make more" : "✦ Make another take";
+						go.textContent = r.left === 0 ? "Sign in to make more" : "✦ Make another take";
 						outOfFilms = r.left === 0;
-						note.textContent = r.left === 0 ? "That was your last free film on the site. Try it in other styles below (free), or download Kinetic to make more and export them." : r.left != null ? `${r.left} free ${r.left === 1 ? "film" : "films"} left on the site. Or try this one in other styles below, free.` : "Try it in other styles below, free.";
+						note.textContent = r.left === 0 ? "That was your last free film on the site. Try it in other styles below (free), or sign in with Google to keep editing it and make more." : r.left != null ? `${r.left} free ${r.left === 1 ? "film" : "films"} left on the site. Or try this one in other styles below, free.` : "Try it in other styles below, free.";
 						document.getElementById("looks-h").textContent = `Your film, in ${looks.children.length} looks. Tap one (free, no AI needed):`;
 						window.va?.("event", { name: "try_film" });
 					} catch (err) {
@@ -974,7 +971,7 @@
 						note.textContent = "";
 						if (err.limit) {
 							outOfFilms = true;
-							go.textContent = "Download to make more";
+							go.textContent = "Sign in to make more";
 						}
 						try {
 							navigator.sendBeacon?.("/api/track", new Blob([JSON.stringify({ e: "tryfail", reason: String(err.message || err).slice(0, 120) })], { type: "application/json" }));

@@ -358,6 +358,19 @@ img.fill {
 	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
 	white-space: nowrap;
 }
+#watermark-tile {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	overflow: hidden;
+	transform: rotate(-22deg);
+	font-family: "Geist", sans-serif;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+	color: rgba(255, 255, 255, 0.2);
+	text-shadow: 0 0 3px rgba(0, 0, 0, 0.35);
+}
 #watermark span:first-child {
 	display: grid;
 	place-items: center;
