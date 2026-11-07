@@ -81,7 +81,9 @@ http
 			if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
 			else if (!fs.existsSync(file) && fs.existsSync(`${file}.html`)) file = `${file}.html`;
 			if (!fs.existsSync(file)) return res.writeHead(404).end("not found");
-			res.writeHead(200, { "content-type": TYPES[path.extname(file)] ?? "application/octet-stream" });
+			// vercel.json headers with exact sources (e.g. Service-Worker-Allowed on /app/sw.js).
+			const extra = Object.fromEntries((config.headers ?? []).filter((h) => h.source === pathname).flatMap((h) => h.headers.map((x) => [x.key, x.value])));
+			res.writeHead(200, { "content-type": TYPES[path.extname(file)] ?? "application/octet-stream", ...extra });
 			fs.createReadStream(file).pipe(res);
 		} catch (e) {
 			console.error(e);
