@@ -8,6 +8,7 @@
 // gives the credit back. A daily per-network cap stops reinstall farming.
 import { cookieValue, loadUser, planOf, readSessionToken } from "./_auth.js";
 import { redis } from "./_kv.js";
+import { promptOf, record } from "./_activity.js";
 import { firstInWindow, place, sendTelegram } from "./_tg.js";
 
 const MODELS = ["deepseek/deepseek-v4.1-flash", "deepseek/deepseek-v4-flash"];
@@ -56,9 +57,14 @@ export default async function handler(req, res) {
 	if (!messages.length || messages.reduce((n, m) => n + m.content.length, 0) > MAX_CHARS) return fail(res, 400, "Bad request.");
 	const kind = ["write", "repair", "scene"].includes(req.headers["x-kinetic-kind"]) ? req.headers["x-kinetic-kind"] : "write";
 	const web = req.headers["x-kinetic-src"] === "web";
+	// A signed-in Kinetic Web account (session cookie): its prompts go on its /admin activity log.
+	// The desktop app has no session, so its prompts are never recorded.
+	const sessionSub = readSessionToken(cookieValue({ headers: { get: () => String(req.headers.cookie || "") } }))?.sub ?? null;
+	const prompt = promptOf(messages);
 	// Website refusals are reported, so a visitor who sees an error never goes unnoticed.
 	// At most one alert per visitor network every 10 minutes, so retries can't flood the chat.
 	const deny = async (res, status, message, extra) => {
+		if (web || sessionSub) await record(web ? null : sessionSub, "write.denied", { status, why: message, prompt, ...(web ? { src: "homepage", visitor: install.slice(0, 8), place: place(req) } : {}) });
 		if (web && firstInWindow(req, `deny${status}`)) await sendTelegram(`❌ Website film refused (${status}): ${message}\n📍 ${place(req)}`).catch(() => {});
 		return fail(res, status, message, extra);
 	};
@@ -158,6 +164,8 @@ export default async function handler(req, res) {
 			}
 			totals = `\n📊 Today: ${n} AI calls, $${spent.toFixed(3)} spent`;
 		} catch {}
+		if (web) await record(null, "try", { prompt, visitor: install.slice(0, 8), place: place(req), cost: usd ?? undefined, model: data.model, left: left ?? undefined });
+		else if (sessionSub) await record(sessionSub, kind, { prompt, plan: pro ? "pro" : "free", left: left ?? undefined, cost: usd ?? undefined, model: data.model });
 		if (kind === "write") {
 			// What the visitor typed (from the brief), so you can see what people try on the site.
 			// Only website prompts are logged (the privacy page says so); app users' descriptions never are.

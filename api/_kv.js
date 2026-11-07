@@ -56,6 +56,16 @@ function memory([cmd, key, ...rest]) {
 		case "SCARD": return live(key)?.size ?? 0;
 		case "SISMEMBER": return live(key)?.has(rest[0]) ? 1 : 0;
 		case "HINCRBY": { const h = live(key) ?? new Map(); h.set(rest[0], (Number(h.get(rest[0]) ?? 0) || 0) + Number(rest[1])); mem.set(key, h); return h.get(rest[0]); }
+		case "HGETALL": { const h = live(key); return h ? Object.fromEntries(h) : {}; }
+		case "LPUSH": { const l = live(key) ?? []; l.unshift(...rest); mem.set(key, l); return l.length; }
+		case "LTRIM": { const l = live(key); if (l) mem.set(key, l.slice(Number(rest[0]), Number(rest[1]) + 1)); return "OK"; }
+		case "LRANGE": { const l = live(key) ?? []; return l.slice(Number(rest[0]), Number(rest[1]) + 1); }
+		case "SCAN": {
+			// One pass over every key (cursor always ends at 0), filtered by the MATCH glob.
+			const m = rest[rest.indexOf("MATCH") + 1] ?? "*";
+			const re = new RegExp(`^${m.split("*").map((x) => x.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*")}$`);
+			return ["0", [...mem.keys()].filter((k) => live(k) !== undefined && re.test(k))];
+		}
 		default: throw new Error(`memory store: ${c} is not supported`);
 	}
 }

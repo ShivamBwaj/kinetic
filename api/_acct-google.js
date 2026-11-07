@@ -1,5 +1,6 @@
 // POST /api/auth/google {credential}: verify a Google ID token, start a session, return /api/me.
 import { fail, json, loadUser, makeSession, meFor, sameOrigin, sessionCookie, upsertUser, verifyGoogleToken } from "./_auth.js";
+import { record } from "./_activity.js";
 import { firstInWindow, place, sendTelegram } from "./_tg.js";
 
 export async function POST(request) {
@@ -19,8 +20,9 @@ export async function POST(request) {
 	}
 	const isNew = !(await loadUser(identity.sub));
 	const user = await upsertUser(identity);
+	const req = { headers: Object.fromEntries(request.headers) };
+	await record(user.sub, isNew ? "signup" : "signin", { place: place(req), ua: req.headers["user-agent"] });
 	if (isNew) {
-		const req = { headers: Object.fromEntries(request.headers) };
 		if (firstInWindow(req, "web-signup")) await sendTelegram(`🆕 New Kinetic Web account\n📍 ${place(req)}`);
 	}
 	const s = { sub: user.sub, email: user.email, name: user.name, picture: user.picture };

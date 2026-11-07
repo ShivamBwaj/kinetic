@@ -1,7 +1,8 @@
 // One function for all Kinetic Web account routes (the Hobby plan caps a deployment at 12
 // functions). vercel.json rewrites each public URL here with ?r=<route>; the handlers live in
 // the underscore files, which Vercel doesn't deploy as functions of their own.
-//   /api/auth/google  /api/auth/dev  /api/auth/logout  /api/me  /api/license  /api/export  /api/log
+//   /api/auth/google  /api/auth/dev  /api/auth/logout  /api/me  /api/license  /api/export  /api/log  /api/admin
+import * as admin from "./_acct-admin.js";
 import * as dev from "./_acct-dev.js";
 import * as exportApi from "./_acct-export.js";
 import * as google from "./_acct-google.js";
@@ -11,7 +12,7 @@ import * as logout from "./_acct-logout.js";
 import * as me from "./_acct-me.js";
 import { fail } from "./_auth.js";
 
-const ROUTES = { "auth/google": google, "auth/dev": dev, "auth/logout": logout, me, license, export: exportApi, log };
+const ROUTES = { admin, "auth/google": google, "auth/dev": dev, "auth/logout": logout, me, license, export: exportApi, log };
 
 function routeOf(request) {
 	const url = new URL(request.url);

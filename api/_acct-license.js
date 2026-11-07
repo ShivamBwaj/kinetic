@@ -1,6 +1,7 @@
 // POST /api/license {key}: link a Kinetic Pro licence key to the signed-in account (the same key
 // as the Windows app; linking doesn't use one of its 3 PC activations). DELETE: unlink it.
 import { redis } from "./_kv.js";
+import { record } from "./_activity.js";
 import { fail, json, linkedKey, meFor, PRO_PRODUCTS, sameOrigin, session } from "./_auth.js";
 
 const DODO = "https://live.dodopayments.com";
@@ -29,6 +30,7 @@ export async function POST(request) {
 	if (product && !PRO_PRODUCTS.includes(product)) return json(200, { ok: false, message: "That key is for a different product." });
 	await redis("SET", `kinetic:lic:${key}`, "1", "EX", 86400);
 	await redis("SET", linkedKey(s.sub), key);
+	await record(s.sub, "license.link", { key: `${key.slice(0, 4)}••••${key.slice(-4)}` });
 	return json(200, { ok: true, message: "Kinetic Pro is unlocked on your account. Thank you!", me: await meFor(s) });
 }
 
@@ -37,5 +39,6 @@ export async function DELETE(request) {
 	if (!s) return fail(401, "Sign in first.");
 	if (!sameOrigin(request)) return fail(403, "Forbidden.");
 	await redis("DEL", linkedKey(s.sub));
+	await record(s.sub, "license.unlink");
 	return json(200, { ok: true, message: "The key is unlinked from this account.", me: await meFor(s) });
 }

@@ -64,6 +64,19 @@
 					"value": "/app"
 				}
 			]
+		},
+		{
+			"source": "/admin",
+			"headers": [
+				{
+					"key": "X-Robots-Tag",
+					"value": "noindex, nofollow"
+				},
+				{
+					"key": "Cache-Control",
+					"value": "no-store"
+				}
+			]
 		}
 	],
 	"redirects": [
@@ -107,6 +120,10 @@
 		{
 			"source": "/api/log",
 			"destination": "/api/account?r=log"
+		},
+		{
+			"source": "/api/admin",
+			"destination": "/api/account?r=admin"
 		},
 		{
 			"source": "/api/v1/chat/completions",

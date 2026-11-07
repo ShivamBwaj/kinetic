@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex, nofollow" />
+		<title>Kinetic admin</title>
+		<style>
+			@font-face { font-family: "Geist"; src: url("/app/engine/fonts/Geist-Variable.woff2") format("woff2"); font-weight: 100 900; }
+			:root { --bg: #0d0e12; --panel: #16181f; --panel2: #1d2029; --line: #2a2e3a; --text: #eceef3; --dim: #9aa0ad; --lime: #c6f36b; --red: #ff6b6b; --amber: #ffc861; --blue: #8fb4ff; }
+			* { box-sizing: border-box; }
+			body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 "Geist", system-ui, sans-serif; }
+			header { position: sticky; top: 0; z-index: 5; display: flex; gap: 12px; align-items: center; padding: 14px 20px; background: rgba(13, 14, 18, 0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+			header h1 { font-size: 17px; margin: 0; letter-spacing: -0.01em; }
+			.mark { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: var(--lime); color: #111; font-weight: 900; }
+			header .sp { flex: 1; }
+			button, .btn { font: inherit; color: var(--text); background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer; text-decoration: none; }
+			button:hover { border-color: #444a5a; }
+			button.on { background: var(--lime); color: #111; border-color: var(--lime); font-weight: 600; }
+			main { padding: 18px 20px 60px; max-width: 1400px; margin: 0 auto; }
+			.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 10px; margin-bottom: 18px; }
+			.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+			.card b { display: block; font-size: 24px; letter-spacing: -0.02em; }
+			.card span { color: var(--dim); font-size: 12.5px; }
+			.bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 12px; }
+			.bar input { flex: 1 1 240px; min-width: 0; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; font: inherit; }
+			.wrapt { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+			table { width: 100%; border-collapse: collapse; min-width: 900px; }
+			th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+			th { color: var(--dim); font-weight: 500; font-size: 12.5px; background: var(--panel); position: sticky; top: 0; }
+			tbody tr:hover { background: var(--panel); }
+			tr.click { cursor: pointer; }
+			.who { display: flex; gap: 10px; align-items: center; }
+			.who img, .who i { width: 28px; height: 28px; border-radius: 50%; flex: none; background: var(--panel2); display: grid; place-items: center; font-style: normal; font-weight: 700; }
+			.who small { display: block; color: var(--dim); }
+			.pill { display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: 12px; font-weight: 600; background: var(--panel2); color: var(--dim); white-space: nowrap; }
+			.pill.pro { background: var(--lime); color: #111; }
+			.pill.out { background: rgba(255, 107, 107, 0.18); color: var(--red); }
+			.dim { color: var(--dim); }
+			.num { font-variant-numeric: tabular-nums; }
+			.feed { display: grid; gap: 6px; }
+			.ev { display: grid; grid-template-columns: 120px 130px 1fr; gap: 12px; padding: 9px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+			.ev .k { font-weight: 600; }
+			.ev .k.write, .ev .k.try, .ev .k.scene, .ev .k.repair { color: var(--lime); }
+			.ev .k.export { color: var(--blue); }
+			.ev .k.error, .ev .k.write\.denied, .ev .k.export\.failed, .ev .k.export\.blocked { color: var(--red); }
+			.ev .k.signup { color: var(--amber); }
+			.ev q { display: block; font-size: 15px; quotes: "“" "”"; margin-bottom: 2px; }
+			.ev .meta { color: var(--dim); font-size: 12.5px; word-break: break-word; }
+			.ev a { color: var(--text); }
+			@media (max-width: 720px) { .ev { grid-template-columns: 1fr; gap: 2px; } main, header { padding-left: 14px; padding-right: 14px; } }
+			.drawer { position: fixed; inset: 0 0 0 auto; width: min(640px, 100%); background: var(--bg); border-left: 1px solid var(--line); z-index: 10; overflow-y: auto; padding: 18px 20px 40px; box-shadow: -30px 0 80px rgba(0, 0, 0, 0.5); }
+			.drawer[hidden], .shade[hidden] { display: none; }
+			.shade { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); z-index: 9; }
+			.drawer h2 { margin: 0 0 4px; font-size: 20px; }
+			.drawer .ev { grid-template-columns: 100px 110px minmax(0, 1fr); }
+			@media (max-width: 720px) { .drawer .ev { grid-template-columns: 1fr; } }
+			.drawer .ev .who-col { display: none; }
+			.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin: 14px 0 18px; }
+			.msg { max-width: 520px; margin: 18vh auto; text-align: center; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 30px; }
+			.msg a { color: var(--lime); }
+			.empty { padding: 30px; text-align: center; color: var(--dim); }
+		</style>
+	</head>
+	<body>
+		<header>
+			<span class="mark">K</span>
+			<h1>Kinetic admin</h1>
+			<span class="sp"></span>
+			<span class="dim" id="updated"></span>
+			<button id="refresh" type="button">Refresh</button>
+		</header>
+		<main id="main"><p class="empty">Loading…</p></main>
+		<div class="shade" id="shade" hidden></div>
+		<aside class="drawer" id="drawer" hidden aria-label="Account details"></aside>
+		<script>
+			const $ = (id) => document.getElementById(id);
+			const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+			const when = (t) => {
+				if (!t) return "—";
+				const d = (Date.now() - t) / 1000;
+				const rel = d < 60 ? "just now" : d < 3600 ? `${Math.floor(d / 60)}m ago` : d < 86400 ? `${Math.floor(d / 3600)}h ago` : `${Math.floor(d / 86400)}d ago`;
+				return `<span title="${new Date(t).toLocaleString()}">${rel}</span>`;
+			};
+			const stamp = (t) => `<span title="${new Date(t).toLocaleString()}">${new Date(t).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</span>`;
+			const LABEL = { signup: "New account", signin: "Signed in", onboarded: "Finished onboarding", write: "AI film", repair: "AI retry", scene: "Scene rewrite", "write.denied": "AI refused", try: "Homepage try", "export.start": "Export started", export: "Exported", "export.failed": "Export failed", "export.blocked": "Export blocked", "license.link": "Linked Pro key", "license.unlink": "Unlinked key", error: "Error" };
+			const GROUPS = { all: () => true, prompts: (e) => ["write", "scene", "repair", "try", "write.denied"].includes(e.kind), homepage: (e) => e.kind === "try" || e.src === "homepage", exports: (e) => e.kind.startsWith("export"), errors: (e) => ["error", "write.denied", "export.failed"].includes(e.kind), accounts: (e) => ["signup", "signin", "onboarded", "license.link", "license.unlink"].includes(e.kind) };
+			let data = null;
+			let tab = "users";
+			let group = "all";
+			let query = "";
+
+			function evRow(e, withWho = true) {
+				const meta = [];
+				for (const [k, v] of Object.entries(e)) {
+					if (["t", "sub", "kind", "prompt", "email"].includes(k)) continue;
+					meta.push(`${esc(k)}: ${esc(v)}`);
+				}
+				const who = e.sub ? `<a href="#" data-sub="${esc(e.sub)}">${esc(e.email || e.sub)}</a>` : `<span class="dim">visitor ${esc(e.visitor ?? "")}</span>`;
+				return `<div class="ev"><div class="dim">${stamp(e.t)}</div><div><div class="k ${esc(e.kind)}">${esc(LABEL[e.kind] ?? e.kind)}</div>${withWho ? `<div class="meta who-col">${who}</div>` : ""}</div><div>${e.prompt ? `<q>${esc(e.prompt)}</q>` : ""}<div class="meta">${meta.join(" · ") || ""}</div></div></div>`;
+			}
+
+			function render() {
+				if (!data) return;
+				const t = data.totals;
+				const money = (n) => `$${n.toFixed(n < 1 ? 3 : 2)}`;
+				const cards = [
+					[t.accounts, "accounts"],
+					[t.newThisWeek, "new this week"],
+					[t.activeThisWeek, "active this week"],
+					[t.pro, "Pro accounts"],
+					[t.trialExports, "trial exports used"],
+					[t.siteTriesToday, "homepage films today"],
+					[t.aiCallsToday, "AI calls today"],
+					[money(t.aiSpendToday), "AI spend today"],
+					[money(t.freeAiSpendMonth), "free AI this month ($2 cap)"],
+					[`${t.foundingSold}/${t.foundingCap}`, "founding licences sold"],
+				];
+				let body = `<div class="cards">${cards.map(([v, l]) => `<div class="card"><b class="num">${esc(v)}</b><span>${esc(l)}</span></div>`).join("")}</div>`;
+				body += `<div class="bar"><button type="button" data-tab="users" class="${tab === "users" ? "on" : ""}">Accounts (${data.users.length})</button><button type="button" data-tab="feed" class="${tab === "feed" ? "on" : ""}">Activity and prompts</button><input id="q" type="search" placeholder="${tab === "users" ? "Search name or email" : "Search prompts, emails, places"}" value="${esc(query)}" /></div>`;
+				const q = query.toLowerCase();
+				if (tab === "users") {
+					const rows = data.users.filter((u) => !q || `${u.email} ${u.name}`.toLowerCase().includes(q));
+					body += rows.length
+						? `<div class="wrapt"><table><thead><tr><th>Account</th><th>Joined</th><th>Last seen</th><th>Plan</th><th>Free exports</th><th>AI films</th><th>Scene edits</th><th>Exports</th><th>Errors</th></tr></thead><tbody>${rows
+								.map((u) => {
+									const s = u.stats || {};
+									const plan = u.pro ? `<span class="pill pro">Pro · ${esc(u.proSource)}</span>` : u.trialUsed >= u.trialLimit ? `<span class="pill out">Trial used up</span>` : `<span class="pill">Trial</span>`;
+									const av = u.picture ? `<img src="${esc(u.picture)}" alt="" referrerpolicy="no-referrer" />` : `<i>${esc((u.name || u.email || "?")[0].toUpperCase())}</i>`;
+									return `<tr class="click" data-sub="${esc(u.sub)}"><td><div class="who">${av}<div>${esc(u.name || "—")}<small>${esc(u.email)}</small></div></div></td><td>${when(u.createdAt)}</td><td>${when(u.seenAt)}</td><td>${plan}${u.onboarded ? "" : ' <span class="pill">not onboarded</span>'}</td><td class="num">${u.pro ? "—" : `${u.trialUsed}/${u.trialLimit}`}</td><td class="num">${s.write || 0}</td><td class="num">${s.scene || 0}</td><td class="num">${s.export || 0}</td><td class="num">${(s.error || 0) + (s["export.failed"] || 0)}</td></tr>`;
+								})
+								.join("")}</tbody></table></div>`
+						: `<p class="empty">No accounts${q ? " match" : " yet"}.</p>`;
+				} else {
+					body += `<div class="bar">${Object.keys(GROUPS)
+						.map((g) => `<button type="button" data-group="${g}" class="${group === g ? "on" : ""}">${g[0].toUpperCase() + g.slice(1)}</button>`)
+						.join("")}</div>`;
+					const evs = data.feed.filter(GROUPS[group]).filter((e) => !q || JSON.stringify(e).toLowerCase().includes(q));
+					body += evs.length ? `<div class="feed">${evs.map((e) => evRow(e)).join("")}</div>` : `<p class="empty">Nothing here yet.</p>`;
+				}
+				$("main").innerHTML = body;
+				const qi = $("q");
+				qi.oninput = () => {
+					query = qi.value;
+					const pos = qi.selectionStart;
+					render();
+					$("q").focus();
+					$("q").setSelectionRange(pos, pos);
+				};
+			}
+
+			async function load() {
+				$("refresh").disabled = true;
+				try {
+					const r = await fetch("/api/admin?view=overview", { credentials: "same-origin", cache: "no-store" });
+					if (r.status === 404) {
+						$("main").innerHTML = `<div class="msg"><h2>Admins only</h2><p class="dim">Sign in to <a href="/app">Kinetic</a> with an admin Google account, then come back to this page.</p></div>`;
+						return;
+					}
+					const j = await r.json();
+					if (!r.ok) throw new Error(j.error?.message || r.status);
+					data = j;
+					$("updated").textContent = `Updated ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+					render();
+				} catch (e) {
+					$("main").innerHTML = `<div class="msg"><h2>Couldn't load</h2><p class="dim">${esc(e.message)}</p></div>`;
+				} finally {
+					$("refresh").disabled = false;
+				}
+			}
+
+			async function openUser(sub) {
+				$("drawer").hidden = $("shade").hidden = false;
+				$("drawer").innerHTML = `<p class="empty">Loading…</p>`;
+				const r = await fetch(`/api/admin?view=user&sub=${encodeURIComponent(sub)}`, { credentials: "same-origin" });
+				const j = await r.json().catch(() => ({}));
+				if (!r.ok) return void ($("drawer").innerHTML = `<p class="empty">${esc(j.error?.message || "Couldn't load.")}</p>`);
+				const u = j.user;
+				const s = u.stats || {};
+				const facts = [
+					["Joined", u.createdAt ? new Date(u.createdAt).toLocaleString() : "—"],
+					["Last seen", u.seenAt ? new Date(u.seenAt).toLocaleString() : "—"],
+					["Plan", u.pro ? `Pro (${u.proSource})` : "Free trial"],
+					["Free exports", u.pro ? "—" : `${u.trialUsed} of ${u.trialLimit}`],
+					["Pro key", u.key || "—"],
+					["AI films", s.write || 0],
+					["Scene edits", s.scene || 0],
+					["Exports", s.export || 0],
+					["Errors", (s.error || 0) + (s["export.failed"] || 0)],
+					["Sign-ins", (s.signin || 0) + (s.signup || 0)],
+				];
+				$("drawer").innerHTML = `<button type="button" id="close" style="float:right">Close</button><h2>${esc(u.name || u.email)}</h2><div class="dim">${esc(u.email)} · <code>${esc(u.sub)}</code></div><div class="facts">${facts.map(([k, v]) => `<div class="card"><span>${esc(k)}</span><b style="font-size:15px">${esc(v)}</b></div>`).join("")}</div><h3>Activity</h3>${j.log.length ? `<div class="feed">${j.log.map((e) => evRow(e, false)).join("")}</div>` : `<p class="empty">No activity recorded yet. Activity is recorded from today's update on.</p>`}`;
+				$("close").onclick = closeUser;
+			}
+			function closeUser() {
+				$("drawer").hidden = $("shade").hidden = true;
+			}
+
+			document.addEventListener("click", (e) => {
+				const t = e.target.closest("[data-tab],[data-group],[data-sub]");
+				if (!t) return;
+				if (t.dataset.tab) (tab = t.dataset.tab), (query = ""), render();
+				else if (t.dataset.group) (group = t.dataset.group), render();
+				else if (t.dataset.sub) e.preventDefault(), openUser(t.dataset.sub);
+			});
+			$("shade").onclick = closeUser;
+			document.addEventListener("keydown", (e) => e.key === "Escape" && closeUser());
+			$("refresh").onclick = load;
+			load();
+		</script>
+	</body>
+</html>

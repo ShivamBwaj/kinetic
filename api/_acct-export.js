@@ -6,6 +6,7 @@
 import { randomUUID } from "node:crypto";
 import { redis } from "./_kv.js";
 import { fail, json, loadUser, planOf, sameOrigin, session, TRIAL_EXPORTS, trialKey } from "./_auth.js";
+import { record } from "./_activity.js";
 import { firstInWindow, place, sendTelegram } from "./_tg.js";
 
 const TOKEN_TTL = 6 * 3600;
@@ -30,12 +31,14 @@ export async function POST(request) {
 			const used = Number(await redis("INCR", trialKey(user.sub)));
 			if (used > TRIAL_EXPORTS) {
 				await redis("DECR", trialKey(user.sub));
+				await record(user.sub, "export.blocked", { aspects: aspects.join(" "), why: "trial used up" });
 				return fail(402, `You've used your ${TRIAL_EXPORTS} free exports. Get Kinetic Pro for unlimited exports.`, "trial_used");
 			}
 			left = TRIAL_EXPORTS - used;
 		}
 		const token = randomUUID();
 		await redis("SET", `kinetic:exp:${token}`, JSON.stringify({ sub: user.sub, pro, at: Date.now(), aspects }), "EX", TOKEN_TTL);
+		await record(user.sub, "export.start", { aspects: aspects.join(" "), plan: pro ? "pro" : "trial", left: left ?? undefined });
 		return json(200, { ok: true, token, left });
 	}
 
@@ -48,6 +51,7 @@ export async function POST(request) {
 	if (action === "refund") {
 		// GETDEL makes the refund one-shot even if the browser retries.
 		if ((await redis("GETDEL", `kinetic:exp:${token}`)) && !rec.pro) await redis("DECR", trialKey(user.sub));
+		await record(user.sub, "export.failed", { aspects: (rec.aspects ?? []).join(" "), note: "failed or cancelled, refunded" });
 		return json(200, { ok: true });
 	}
 	if (action === "finish") {
@@ -56,6 +60,7 @@ export async function POST(request) {
 		const runs = Array.isArray(st.runs) ? st.runs.slice(0, 4) : [];
 		const summary = runs.map((r) => `${ASPECTS.has(r?.aspect) ? r.aspect : "?"} ${Number(r?.frames) || 0}f @ ${Number(r?.msPerFrame) || 0}ms`).join(", ");
 		console.log(JSON.stringify({ event: "web.export", pro: rec.pro, ms: Number(st.ms) || 0, draft: st.draft === true, runs: summary }));
+		await record(user.sub, "export", { plan: rec.pro ? "pro" : "trial", seconds: Math.round((Number(st.ms) || 0) / 1000), runs: summary, draft: st.draft === true, place: place(req) });
 		if (firstInWindow(req, "web-export")) await sendTelegram(`🎬 Web export (${rec.pro ? "Pro" : "trial"}): ${summary || "done"} in ${Math.round((Number(st.ms) || 0) / 1000)}s\n📍 ${place(req)}`);
 		return json(200, { ok: true });
 	}
