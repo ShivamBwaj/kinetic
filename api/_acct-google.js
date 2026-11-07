@@ -1,6 +1,6 @@
 // POST /api/auth/google {credential}: verify a Google ID token, start a session, return /api/me.
-import { fail, json, loadUser, makeSession, meFor, sameOrigin, sessionCookie, upsertUser, verifyGoogleToken } from "../_auth.js";
-import { firstInWindow, place, sendTelegram } from "../_tg.js";
+import { fail, json, loadUser, makeSession, meFor, sameOrigin, sessionCookie, upsertUser, verifyGoogleToken } from "./_auth.js";
+import { firstInWindow, place, sendTelegram } from "./_tg.js";
 
 export async function POST(request) {
 	if (!sameOrigin(request)) return fail(403, "Cross-site sign-in is not allowed.");

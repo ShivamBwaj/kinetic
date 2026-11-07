@@ -7,9 +7,9 @@ import { createHmac, generateKeyPairSync, sign } from "node:crypto";
 process.env.KINETIC_MEMORY_STORE = "1";
 process.env.DODO_WEBHOOK_SECRET = `whsec_${Buffer.from("test-webhook-secret").toString("base64")}`;
 const auth = await import("../api/_auth.js");
-const exportApi = await import("../api/export.js");
+const exportApi = await import("../api/_acct-export.js");
 const webhook = await import("../api/dodo-webhook.js");
-const me = await import("../api/me.js");
+const me = await import("../api/_acct-me.js");
 
 const ORIGIN = "https://kinetic.launchloop.tech";
 function req(path, { method = "POST", body, cookie } = {}) {

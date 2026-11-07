@@ -72,6 +72,34 @@
 	],
 	"rewrites": [
 		{
+			"source": "/api/auth/google",
+			"destination": "/api/account?r=auth/google"
+		},
+		{
+			"source": "/api/auth/dev",
+			"destination": "/api/account?r=auth/dev"
+		},
+		{
+			"source": "/api/auth/logout",
+			"destination": "/api/account?r=auth/logout"
+		},
+		{
+			"source": "/api/me",
+			"destination": "/api/account?r=me"
+		},
+		{
+			"source": "/api/license",
+			"destination": "/api/account?r=license"
+		},
+		{
+			"source": "/api/export",
+			"destination": "/api/account?r=export"
+		},
+		{
+			"source": "/api/log",
+			"destination": "/api/account?r=log"
+		},
+		{
 			"source": "/api/v1/chat/completions",
 			"destination": "/api/write"
 		},
@@ -87,10 +115,7 @@
 		"api/brand.js": {
 			"maxDuration": 20
 		},
-		"api/export.js": {
-			"maxDuration": 10
-		},
-		"api/log.js": {
+		"api/account.js": {
 			"maxDuration": 10
 		}
 	}

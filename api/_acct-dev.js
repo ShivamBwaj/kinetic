@@ -1,6 +1,6 @@
 // POST /api/auth/dev {email}: local development sign-in without Google. Only when
 // KINETIC_DEV_LOGIN=1 and never on Vercel production.
-import { devLogin, fail, json, makeSession, meFor, sameOrigin, sessionCookie, upsertUser } from "../_auth.js";
+import { devLogin, fail, json, makeSession, meFor, sameOrigin, sessionCookie, upsertUser } from "./_auth.js";
 
 export async function POST(request) {
 	if (!devLogin()) return fail(404, "Not found.");

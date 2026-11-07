@@ -16,7 +16,8 @@ const config = JSON.parse(fs.readFileSync(path.join(ROOT, "vercel.json"), "utf8"
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".woff2": "font/woff2", ".mp4": "video/mp4", ".xml": "application/xml" };
 
 function rewrite(pathname) {
-	for (const r of config.rewrites ?? []) if (r.source === pathname) return r.destination;
+	// Destinations may carry a query (/api/account?r=me); the function file is the path part.
+	for (const r of config.rewrites ?? []) if (r.source === pathname) return r.destination.split("?")[0];
 	return pathname;
 }
 
